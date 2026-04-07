@@ -19,3 +19,10 @@ Thumbs.db
 
 # Misc
 *.log
+
+.claude
+
+clean.js
+fix.js
+prompt_siap.txt
+vercel.json
