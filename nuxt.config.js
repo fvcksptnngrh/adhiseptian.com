@@ -51,9 +51,9 @@ export default {
   },
 
   serverMiddleware: [
-    { path: '/api/wakatime', handler: '~/server-middleware/wakatime.js' },
-    { path: '/api/github', handler: '~/server-middleware/github.js' },
-    { path: '/api/guestbook', handler: '~/server-middleware/guestbook.js' }
+    { path: '/api/wakatime', handler: './server-middleware/wakatime.js' },
+    { path: '/api/github', handler: './server-middleware/github.js' },
+    { path: '/api/guestbook', handler: './server-middleware/guestbook.js' }
   ],
 
   publicRuntimeConfig: {
