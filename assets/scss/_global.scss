@@ -90,12 +90,13 @@ button {
 }
 
 // === REDUCED MOTION (accessibility) ===
+// Only disable looping/decorative animations, keep AOS & transitions working
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  html { scroll-behavior: auto !important; }
+  .hero__gradient-orb,
+  .hero__scroll-line,
+  .hero__cursor-blink {
+    animation: none !important;
   }
 }
 

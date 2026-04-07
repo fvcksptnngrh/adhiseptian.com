@@ -187,7 +187,7 @@ export default {
 <style lang="scss" scoped>
 .home-page {
   position: relative;
-  padding: 48px 0 0;
+  padding: 64px 0 0;
   overflow: visible;
 }
 

@@ -31,7 +31,7 @@ export default {
     return {
       row1: [
         { name: 'Vue.js',       icon: 'https://cdn.simpleicons.org/vuedotjs/4FC08D' },
-        { name: 'Nuxt.js',      icon: 'https://cdn.simpleicons.org/nuxtdotjs/00DC82' },
+        { name: 'Nuxt.js',      icon: 'https://api.iconify.design/logos/nuxt-icon.svg' },
         { name: 'React',        icon: 'https://cdn.simpleicons.org/react/61DAFB' },
         { name: 'TypeScript',   icon: 'https://cdn.simpleicons.org/typescript/3178C6' },
         { name: 'JavaScript',   icon: 'https://cdn.simpleicons.org/javascript/F7DF1E' },
@@ -157,8 +157,10 @@ export default {
     pointer-events: none;
   }
 
-  &:hover .marquee-track {
-    animation-play-state: paused;
+  @media (hover: hover) {
+    &:hover .marquee-track {
+      animation-play-state: paused;
+    }
   }
 }
 

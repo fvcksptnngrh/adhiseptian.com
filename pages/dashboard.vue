@@ -42,7 +42,7 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-page {
-  padding: 48px 0 0;
+  padding: 64px 0 0;
 }
 
 .content-wrap {

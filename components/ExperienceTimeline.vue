@@ -200,9 +200,9 @@ export default {
   &__year {
     font-family: $font-body;
     font-size: $fs-caption;
-    font-weight: 500;
+    font-weight: 700;
     letter-spacing: 2px;
-    color: $accent-cyan;
+    color: $text-primary;
     display: block;
     margin-bottom: 8px;
   }
