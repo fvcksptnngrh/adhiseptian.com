@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm init:*)",
+      "Bash(npm install:*)",
+      "Bash(cd:*)",
+      "Bash(npx nuxt:*)",
+      "Bash(curl:*)",
+      "WebFetch(domain:www.linkedin.com)",
+      "Bash(node -e \"require\\('tailwind-merge'\\)\")",
+      "Bash(node -e \"require\\('@nuxtjs/tailwindcss'\\)\")",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(node -e \"require\\('dotenv'\\)\")",
+      "Bash(node:*)"
+    ]
+  }
+}

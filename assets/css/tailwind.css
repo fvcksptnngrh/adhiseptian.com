@@ -1,0 +1,90 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Cal Sans';
+  src: url('https://cdn.jsdelivr.net/npm/cal-sans@1.0.1/fonts/CalSans-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 5%;
+    --foreground: 0 0% 95%;
+    --card: 0 0% 8%;
+    --card-foreground: 0 0% 95%;
+    --muted: 0 0% 12%;
+    --muted-foreground: 0 0% 55%;
+    --border: 0 0% 16%;
+    --primary: 189 94% 43%;
+    --primary-foreground: 0 0% 5%;
+    --ring: 189 94% 43%;
+
+    /* Extended tokens for SCSS */
+    --bg-primary: #0d0d0d;
+    --bg-card: #141414;
+    --bg-elevated: #1f1f1f;
+    --border-color: rgba(255, 255, 255, 0.1);
+    --border-subtle: rgba(255, 255, 255, 0.06);
+    --text-primary: #f2f2f2;
+    --text-secondary: #8c8c8c;
+    --text-muted: #5a5a5a;
+    --accent-cyan: #06b6d4;
+    --accent-cyan-glow: rgba(6, 182, 212, 0.3);
+    --selection-bg: #06b6d4;
+    --selection-fg: #0d0d0d;
+    --scrollbar-track: #0d0d0d;
+    --scrollbar-thumb: rgba(255, 255, 255, 0.12);
+    --scrollbar-thumb-hover: rgba(255, 255, 255, 0.2);
+    --glassmorphism-bg: rgba(255, 255, 255, 0.03);
+    --glassmorphism-stat-bg: rgba(255, 255, 255, 0.04);
+    --cursor-hover-bg: rgba(255, 255, 255, 0.3);
+    --cursor-ring-border: rgba(6, 182, 212, 0.4);
+    --cursor-ring-hover-border: rgba(242, 242, 242, 0.3);
+    --nav-hover-bg: rgba(255, 255, 255, 0.05);
+    --chart-opacity: 0.85;
+  }
+
+  .light {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 10%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 45%;
+    --border: 0 0% 86%;
+    --primary: 189 94% 38%;
+    --primary-foreground: 0 0% 100%;
+    --ring: 189 94% 38%;
+
+    --bg-primary: #f9fafb;
+    --bg-card: #ffffff;
+    --bg-elevated: #f3f4f6;
+    --border-color: rgba(0, 0, 0, 0.1);
+    --border-subtle: rgba(0, 0, 0, 0.06);
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+    --accent-cyan: #0891b2;
+    --accent-cyan-glow: rgba(8, 145, 178, 0.2);
+    --selection-bg: #0891b2;
+    --selection-fg: #ffffff;
+    --scrollbar-track: #f9fafb;
+    --scrollbar-thumb: rgba(0, 0, 0, 0.12);
+    --scrollbar-thumb-hover: rgba(0, 0, 0, 0.2);
+    --glassmorphism-bg: rgba(255, 255, 255, 0.6);
+    --glassmorphism-stat-bg: rgba(0, 0, 0, 0.03);
+    --cursor-hover-bg: rgba(0, 0, 0, 0.15);
+    --cursor-ring-border: rgba(8, 145, 178, 0.4);
+    --cursor-ring-hover-border: rgba(17, 24, 39, 0.2);
+    --nav-hover-bg: rgba(0, 0, 0, 0.05);
+    --chart-opacity: 1;
+  }
+
+  .nuxt-link-active,
+  .nuxt-link-exact-active {
+    color: inherit;
+  }
+}

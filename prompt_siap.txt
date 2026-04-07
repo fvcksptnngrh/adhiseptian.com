@@ -1,0 +1,469 @@
+
+--- START FILE: pages/index.vue ---
+<template>
+  <div class="home-page">
+    <div class="content-wrap">
+      <!-- ── Hero ── -->
+      <section class="hero" data-aos="fade-up">
+        <p class="hero__greeting">hi, I'm</p>
+        <h1 class="hero__name">Adhi Septian Nugroho</h1>
+        <p class="hero__role">
+          <FlipWords :words="['a frontend developer', 'a Vue.js enthusiast', 'a Nuxt craftsman', 'an Informatics student']" />
+        </p>
+        <p class="hero__bio">
+          I'm a Frontend Developer Intern at
+          <a href="https://www.alfagift.id" target="_blank" rel="noopener" class="hero__highlight">Alfagift</a>
+          and an Informatics Engineering student at
+          <a href="https://www.uksw.edu" target="_blank" rel="noopener" class="hero__highlight">UKSW Semarang</a>.
+          I build clean, fast, and user-friendly web applications using Vue, Nuxt, and React.
+        </p>
+        <div class="hero__actions">
+          <a href="mailto:adhiseptiannugroho@gmail.com" class="hero__btn hero__btn--primary">
+            Get in touch
+          </a>
+          <a href="https://github.com/fvcksptnngrh" target="_blank" rel="noopener" class="hero__btn hero__btn--ghost">
+            GitHub
+          </a>
+        </div>
+      </section>
+      <!-- ── Tech Stack ── -->
+      <Block icon="🛠" title="what i work with" description="Technologies I use day to day">
+        <TechStack />
+      </Block>
+      <!-- ── Bottom row: Featured + Contact (side by side on desktop) ── -->
+      <div class="bottom-row">
+        <!-- Featured Projects -->
+        <Block icon="💼" title="featured work" description="A selection of projects I've built">
+          <div class="featured-grid">
+            <a
+              v-for="project in featuredProjects"
+              :key="project.id"
+              :href="project.url"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="featured-card"
+            >
+              <div class="featured-card__header">
+                <span class="featured-card__num">{{ project.number }}</span>
+                <div class="featured-card__tags">
+                  <span v-for="t in project.tech.slice(0,2)" :key="t" class="tag">{{ t }}</span>
+                </div>
+              </div>
+              <h3 class="featured-card__title">{{ project.title }}</h3>
+              <p class="featured-card__role">{{ project.role }}</p>
+            </a>
+          </div>
+          <nuxt-link to="/projects" class="view-all-link">
+            View all projects →
+          </nuxt-link>
+        </Block>
+        <!-- Get in touch -->
+        <Block icon="✉️" title="get in touch">
+          <div class="contact-block">
+            <p class="contact-block__text">
+              Have a project in mind, a question, or just want to say hi?
+              My inbox is always open.
+            </p>
+            <a href="mailto:adhiseptiannugroho@gmail.com" class="contact-block__email">
+              adhiseptiannugroho@gmail.com
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:4px">
+                <path d="M7 17L17 7M17 7H7M17 7V17"/>
+              </svg>
+            </a>
+            <div class="contact-socials">
+              <a href="https://github.com/fvcksptnngrh" target="_blank" rel="noopener" class="contact-social-link">GitHub</a>
+              <a href="https://www.linkedin.com/in/adhiseptiannugroho/" target="_blank" rel="noopener" class="contact-social-link">LinkedIn</a>
+            </div>
+          </div>
+        </Block>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+import FlipWords from '~/components/FlipWords.vue'
+import Block from '~/components/Block.vue'
+import TechStack from '~/components/TechStack.vue'
+export default {
+  name: 'IndexPage',
+  components: { FlipWords, Block, TechStack },
+  data() {
+    return {
+      featuredProjects: [
+        {
+          id: 1, number: '01',
+          title: 'InstaRoaster',
+          role: 'Full Stack Developer',
+          tech: ['React', 'TypeScript', 'AI'],
+          url: 'https://github.com/fvcksptnngrh/InstaRoast'
+        },
+        {
+          id: 2, number: '02',
+          title: 'WeatherBebe',
+          role: 'Frontend Developer',
+          tech: ['React', 'Tailwind CSS'],
+          url: 'https://github.com/fvcksptnngrh/Simple-Weather-App'
+        },
+        {
+          id: 3, number: '03',
+          title: 'Task Roadmap',
+          role: 'Full Stack Developer',
+          tech: ['JavaScript', 'Node.js'],
+          url: 'https://github.com/fvcksptnngrh/task-roadmap'
+        }
+      ]
+    }
+  },
+  head() {
+    return {
+      title: 'Adhi Septian Nugroho — Frontend Developer'
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.home-page {
+  padding: 48px 0 0;
+}
+.content-wrap {
+  max-width: $container-max;
+  margin: 0 auto;
+  padding: 0 $container-padding;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.hero {
+  padding: 48px 0 32px;
+  &__greeting {
+    font-size: $fs-small;
+    color: $text-secondary;
+    margin-bottom: 8px;
+    font-weight: 400;
+  }
+  &__name {
+    font-family: $font-heading;
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 600;
+    color: $text-primary;
+    line-height: 1.1;
+    margin-bottom: 12px;
+    letter-spacing: -0.5px;
+  }
+  &__role {
+    font-size: clamp(16px, 2.5vw, 20px);
+    color: $accent-cyan;
+    font-weight: 500;
+    margin-bottom: 20px;
+    min-height: 1.5em;
+  }
+  &__bio {
+    font-size: $fs-body;
+    color: $text-secondary;
+    line-height: 1.7;
+    max-width: 620px;
+    margin-bottom: 28px;
+  }
+  &__highlight {
+    color: $text-primary;
+    border-bottom: 1px solid $border-color;
+    transition: border-color $transition-fast;
+    &:hover {
+      border-color: $accent-cyan;
+      color: $accent-cyan;
+    }
+  }
+  &__actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: $fs-small;
+    font-weight: 500;
+    transition: all $transition-fast;
+    &--primary {
+      background: var(--accent-cyan);
+      color: var(--bg-primary);
+      &:hover {
+        filter: brightness(1.15);
+      }
+    }
+    &--ghost {
+      border: 1px solid $border-color;
+      color: $text-secondary;
+      &:hover {
+        border-color: $text-secondary;
+        color: $text-primary;
+      }
+    }
+  }
+}
+.bottom-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  @media (min-width: $bp-desktop) {
+    grid-template-columns: 2fr 1fr;
+  }
+}
+.featured-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-bottom: 16px;
+  @media (min-width: 540px) {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+.featured-card {
+  display: block;
+  padding: 16px;
+  border: 1px solid $border-color;
+  border-radius: 10px;
+  background: $bg-elevated;
+  transition: border-color $transition-fast, transform $transition-fast;
+  &:hover {
+    border-color: var(--accent-cyan);
+    transform: translateY(-2px);
+  }
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  &__num {
+    font-family: $font-mono;
+    font-size: 11px;
+    color: $text-muted;
+  }
+  &__tags {
+    display: flex;
+    gap: 4px;
+  }
+  &__title {
+    font-size: $fs-small;
+    font-weight: 600;
+    color: $text-primary;
+    margin-bottom: 4px;
+  }
+  &__role {
+    font-size: $fs-caption;
+    color: $text-secondary;
+  }
+}
+.tag {
+  font-size: 10px;
+  font-weight: 500;
+  padding: 2px 7px;
+  border-radius: 100px;
+  background: $bg-primary;
+  border: 1px solid $border-subtle;
+  color: $text-secondary;
+}
+.view-all-link {
+  display: inline-block;
+  font-size: $fs-caption;
+  color: $text-secondary;
+  font-weight: 500;
+  transition: color $transition-fast;
+  &:hover { color: $accent-cyan; }
+}
+.contact-block {
+  &__text {
+    font-size: $fs-small;
+    color: $text-secondary;
+    line-height: 1.6;
+    margin-bottom: 16px;
+  }
+  &__email {
+    display: block;
+    font-family: $font-mono;
+    font-size: $fs-small;
+    color: $text-primary;
+    border-bottom: 1px solid $border-color;
+    padding-bottom: 2px;
+    transition: all $transition-fast;
+    margin-bottom: 20px;
+    word-break: break-all;
+    &:hover {
+      color: $accent-cyan;
+      border-color: $accent-cyan;
+    }
+  }
+}
+.contact-socials {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.contact-social-link {
+  font-size: $fs-caption;
+  font-weight: 500;
+  color: $text-muted;
+  border: 1px solid $border-subtle;
+  border-radius: 100px;
+  padding: 4px 12px;
+  transition: all $transition-fast;
+  &:hover {
+    color: $text-primary;
+    border-color: $border-color;
+  }
+}
+</style>
+--- END FILE: pages/index.vue ---
+
+--- START FILE: components/TechStack.vue ---
+<template>
+  <div class="marquee-wrap">
+    <!-- Row 1 — scrolls LEFT -->
+    <div class="marquee-row">
+      <div class="marquee-track marquee-track--left">
+        <div v-for="(tech, i) in repeat(row1, 6)" :key="'r1-' + i" class="tech-item">
+          <img :src="tech.icon" :alt="tech.name" class="tech-icon" />
+          <span class="tech-name">{{ tech.name }}</span>
+        </div>
+      </div>
+    </div>
+    <!-- Row 2 — scrolls RIGHT -->
+    <div class="marquee-row">
+      <div class="marquee-track marquee-track--right">
+        <div v-for="(tech, i) in repeat(row2, 6)" :key="'r2-' + i" class="tech-item">
+          <img :src="tech.icon" :alt="tech.name" class="tech-icon" />
+          <span class="tech-name">{{ tech.name }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+<script>
+export default {
+  name: 'TechStack',
+  data() {
+    return {
+      row1: [
+        { name: 'Vue.js',       icon: 'https://cdn.simpleicons.org/vuedotjs/4FC08D' },
+        { name: 'Nuxt.js',      icon: 'https://cdn.simpleicons.org/nuxtdotjs/00DC82' },
+        { name: 'React',        icon: 'https://cdn.simpleicons.org/react/61DAFB' },
+        { name: 'TypeScript',   icon: 'https://cdn.simpleicons.org/typescript/3178C6' },
+        { name: 'JavaScript',   icon: 'https://cdn.simpleicons.org/javascript/F7DF1E' },
+        { name: 'Tailwind CSS', icon: 'https://cdn.simpleicons.org/tailwindcss/06B6D4' },
+        { name: 'Figma',        icon: 'https://cdn.simpleicons.org/figma/F24E1E' },
+        { name: 'Git',          icon: 'https://cdn.simpleicons.org/git/F05032' }
+      ],
+      row2: [
+        { name: 'Laravel',      icon: 'https://cdn.simpleicons.org/laravel/FF2D20' },
+        { name: 'PHP',          icon: 'https://cdn.simpleicons.org/php/777BB4' },
+        { name: 'Spring Boot',  icon: 'https://cdn.simpleicons.org/springboot/6DB33F' },
+        { name: 'Java',         icon: 'https://cdn.simpleicons.org/openjdk/ED8B00' },
+        { name: 'Node.js',      icon: 'https://cdn.simpleicons.org/nodedotjs/339933' },
+        { name: 'Python',       icon: 'https://cdn.simpleicons.org/python/3776AB' },
+        { name: 'MySQL',        icon: 'https://cdn.simpleicons.org/mysql/4479A1' },
+        { name: 'Docker',       icon: 'https://cdn.simpleicons.org/docker/2496ED' }
+      ]
+    }
+  },
+  methods: {
+    repeat(arr, times) {
+      var result = []
+      for (var t = 0; t < times; t++) {
+        for (var i = 0; i < arr.length; i++) {
+          result.push(arr[i])
+        }
+      }
+      return result
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.marquee-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-left: -20px;
+  margin-right: -20px;
+  overflow: hidden;
+}
+.marquee-row {
+  position: relative;
+  overflow: hidden;
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(to right, var(--bg-card), transparent);
+    z-index: 2;
+    pointer-events: none;
+  }
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 60px;
+    background: linear-gradient(to left, var(--bg-card), transparent);
+    z-index: 2;
+    pointer-events: none;
+  }
+  &:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  gap: 10px;
+  will-change: transform;
+  &--left {
+    animation: scroll-left 40s linear infinite;
+  }
+  &--right {
+    animation: scroll-right 40s linear infinite;
+  }
+}
+@keyframes scroll-left {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(calc(-100% / 6)); }
+}
+@keyframes scroll-right {
+  0%   { transform: translateX(calc(-100% / 6)); }
+  100% { transform: translateX(0); }
+}
+.tech-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 14px 20px;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  background: var(--bg-elevated);
+  min-width: 90px;
+  user-select: none;
+  flex-shrink: 0;
+}
+.tech-icon {
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
+  display: block;
+}
+.tech-name {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+</style>
+--- END FILE: components/TechStack.vue ---
