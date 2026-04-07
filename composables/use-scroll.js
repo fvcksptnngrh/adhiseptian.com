@@ -2,14 +2,20 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 export function useScroll(threshold = 0) {
   const isScrolled = ref(false)
+  var ticking = false
 
   const handleScroll = () => {
-    isScrolled.value = window.scrollY > threshold
+    if (!ticking) {
+      ticking = true
+      requestAnimationFrame(() => {
+        isScrolled.value = window.scrollY > threshold
+        ticking = false
+      })
+    }
   }
 
   onMounted(() => {
-    window.addEventListener('scroll', handleScroll)
-    // Cek posisi awal saat halaman di-load
+    window.addEventListener('scroll', handleScroll, { passive: true })
     handleScroll()
   })
 

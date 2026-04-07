@@ -3,11 +3,10 @@ import 'aos/dist/aos.css'
 
 export default ({ app }) => {
   AOS.init({
-    duration: 800,
+    duration: 600,
     easing: 'ease-out-cubic',
     once: true,
-    offset: 50,
-    disable: 'mobile'
+    offset: 30
   })
 
   // Refresh AOS on every route change so new page elements animate in

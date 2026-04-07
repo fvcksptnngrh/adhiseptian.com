@@ -89,6 +89,28 @@ button {
   pointer-events: auto !important;
 }
 
+// === REDUCED MOTION (accessibility) ===
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// === MOBILE PERFORMANCE ===
+@media (max-width: 768px) {
+  // Reduce backdrop-filter cost on mobile
+  .gb-card,
+  .coding-card,
+  .engagement-card,
+  .corner-border {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
 // === THEME TRANSITION ===
 .theme-transition,
 .theme-transition *,

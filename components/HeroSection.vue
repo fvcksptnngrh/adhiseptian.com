@@ -95,25 +95,29 @@ export default {
     },
     initGSAP() {
       if (!this.$gsap) return
-      const tl = this.$gsap.timeline({ defaults: { ease: 'power3.out' } })
+      var isMobile = window.innerWidth < 768
+      var tl = this.$gsap.timeline({ defaults: { ease: 'power3.out' } })
       tl.from(this.$refs.label, { y: 30, opacity: 0, duration: 0.8, delay: 0.2 })
-        .from(this.$refs.titleLine1, { y: 100, opacity: 0, duration: 0.9 }, '-=0.4')
-        .from(this.$refs.titleLine2, { y: 100, opacity: 0, duration: 0.9 }, '-=0.6')
-        .from(this.$refs.titleLine3, { y: 100, opacity: 0, duration: 0.9 }, '-=0.6')
+        .from(this.$refs.titleLine1, { y: isMobile ? 40 : 100, opacity: 0, duration: 0.9 }, '-=0.4')
+        .from(this.$refs.titleLine2, { y: isMobile ? 40 : 100, opacity: 0, duration: 0.9 }, '-=0.6')
+        .from(this.$refs.titleLine3, { y: isMobile ? 40 : 100, opacity: 0, duration: 0.9 }, '-=0.6')
         .from(this.$refs.subtitle, { y: 20, opacity: 0, duration: 0.6 }, '-=0.3')
         .from(this.$refs.tags, { y: 20, opacity: 0, duration: 0.6 }, '-=0.4')
         .from(this.$refs.cta, { y: 20, opacity: 0, duration: 0.6 }, '-=0.3')
         .from(this.$refs.scrollIndicator, { opacity: 0, duration: 0.8 }, '-=0.2')
 
-      this.$gsap.to(this.$refs.title, {
-        y: -80,
-        scrollTrigger: {
-          trigger: this.$refs.hero,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 1
-        }
-      })
+      // Skip scroll-linked parallax on mobile
+      if (!isMobile) {
+        this.$gsap.to(this.$refs.title, {
+          y: -80,
+          scrollTrigger: {
+            trigger: this.$refs.hero,
+            start: 'top top',
+            end: 'bottom top',
+            scrub: 1
+          }
+        })
+      }
     },
     scrollToWork() {
       const el = document.getElementById('portfolio')
@@ -311,6 +315,31 @@ export default {
 @media (max-width: $bp-tablet) {
   .hero {
     &__scroll-indicator { display: none; }
+
+    &__gradient-orb {
+      filter: blur(80px);
+      opacity: 0.1;
+
+      &--1 {
+        width: 300px;
+        height: 300px;
+        animation: none;
+      }
+      &--2 {
+        width: 250px;
+        height: 250px;
+        animation: none;
+      }
+    }
+
+    &__content {
+      padding-top: 100px;
+      padding-bottom: 60px;
+    }
+
+    &__title {
+      letter-spacing: -1px;
+    }
   }
 }
 </style>

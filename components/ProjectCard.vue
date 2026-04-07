@@ -165,6 +165,10 @@ export default {
     object-fit: cover;
     opacity: 0.7;
     transition: all 0.4s ease;
+
+    @media (max-width: $bp-tablet) {
+      opacity: 1;
+    }
   }
 }
 </style>

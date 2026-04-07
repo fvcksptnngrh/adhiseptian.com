@@ -139,10 +139,16 @@ export default {
     }
   },
   methods: {
+    isMobile() {
+      return window.innerWidth < 768
+    },
     initParallax() {
       var gsap = this.$gsap
       var ST = this.$ScrollTrigger
       if (!gsap || !ST) return
+
+      // Skip heavy parallax on mobile — causes jank and battery drain
+      if (this.isMobile()) return
 
       this._heroTriggers = []
       var heroEl = this.$refs.hero
@@ -463,6 +469,31 @@ export default {
   &:hover {
     color: $text-primary;
     border-color: $border-color;
+  }
+}
+
+// ── Mobile optimizations ──
+@media (max-width: 768px) {
+  .hero__bg-grid {
+    height: 350px;
+    background-size: 32px 32px;
+    opacity: 0.3;
+  }
+  .hero__bg-glow {
+    width: 350px;
+    height: 350px;
+    opacity: 0.06;
+  }
+  .hero__bg-glow2 {
+    width: 300px;
+    height: 300px;
+    opacity: 0.04;
+  }
+  .home-page {
+    padding: 24px 0 0;
+  }
+  .hero {
+    padding: 24px 0 20px;
   }
 }
 </style>

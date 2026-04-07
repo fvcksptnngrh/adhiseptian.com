@@ -85,14 +85,15 @@ export default {
   methods: {
     initScrollLine() {
       if (!this.$gsap || !this.$refs.lineFill) return
+      var isMobile = window.innerWidth < 768
       this.$gsap.to(this.$refs.lineFill, {
         scaleY: 1,
         ease: 'none',
         scrollTrigger: {
           trigger: this.$refs.timeline,
-          start: 'top center',
-          end: 'bottom center',
-          scrub: 1
+          start: isMobile ? 'top 80%' : 'top center',
+          end: isMobile ? 'bottom 60%' : 'bottom center',
+          scrub: isMobile ? 0.5 : 1
         }
       })
     }

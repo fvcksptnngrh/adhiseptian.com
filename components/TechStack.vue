@@ -69,6 +69,9 @@ export default {
       var ST = this.$ScrollTrigger
       if (!gsap || !ST) return
 
+      // Skip scroll-linked parallax on mobile — CSS marquee is enough
+      if (window.innerWidth < 768) return
+
       this._triggers = []
 
       // Row 1: shifts left slightly on scroll
@@ -212,5 +215,20 @@ export default {
   font-weight: 500;
   color: var(--text-secondary);
   white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .marquee-track {
+    &--left { animation-duration: 30s; }
+    &--right { animation-duration: 30s; }
+  }
+  .tech-item {
+    padding: 10px 14px;
+    min-width: 76px;
+  }
+  .tech-icon {
+    width: 24px;
+    height: 24px;
+  }
 }
 </style>
