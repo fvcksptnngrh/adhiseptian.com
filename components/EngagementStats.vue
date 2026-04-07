@@ -15,9 +15,9 @@
     </div>
 
     <div class="eng-grid">
-      <div v-for="stat in stats" :key="stat.label" class="eng-stat">
+      <div v-for="stat in stats" :key="stat.label" class="eng-stat" ref="statEls">
         <span class="eng-stat__label">{{ stat.label }}</span>
-        <span class="eng-stat__value">{{ stat.value.toLocaleString() }}</span>
+        <span class="eng-stat__value">{{ stat.prefix }}{{ stat.display.toLocaleString() }}{{ stat.suffix }}</span>
       </div>
     </div>
   </div>
@@ -29,10 +29,92 @@ export default {
   data() {
     return {
       stats: [
-        { label: 'All-Time views',     value: 1193 },
-        { label: 'All-Time reactions', value: 2032 },
-        { label: 'Endorsements',       value: 214  }
-      ]
+        { label: 'All-Time Views', value: 0, display: 0, prefix: '', suffix: '' },
+        { label: 'All-Time Reactions', value: 0, display: 0, prefix: '', suffix: '' },
+        { label: 'Endorsements', value: 10, display: 0, prefix: '', suffix: '+' }
+      ],
+      hasAnimated: false
+    }
+  },
+  mounted() {
+    this.fetchStats()
+    this.setupObserver()
+  },
+  beforeDestroy() {
+    if (this._observer) this._observer.disconnect()
+  },
+  methods: {
+    async fetchStats() {
+      try {
+        var res = await fetch('/api/engagements')
+        var data = await res.json()
+        if (data.views !== undefined) {
+          this.stats[0].value = data.views
+        }
+        if (data.reactions !== undefined) {
+          this.stats[1].value = data.reactions
+        }
+        // If already visible, animate now
+        if (this.hasAnimated) {
+          this.animateCountUp()
+        }
+      } catch (e) {
+        // Keep defaults
+      }
+    },
+    setupObserver() {
+      var self = this
+      if (!window.IntersectionObserver) {
+        this.hasAnimated = true
+        this.animateCountUp()
+        return
+      }
+      this._observer = new IntersectionObserver(function (entries) {
+        for (var i = 0; i < entries.length; i++) {
+          if (entries[i].isIntersecting && !self.hasAnimated) {
+            self.hasAnimated = true
+            self.animateCountUp()
+            self._observer.disconnect()
+          }
+        }
+      }, { threshold: 0.3 })
+
+      this.$nextTick(function () {
+        if (self.$el) {
+          self._observer.observe(self.$el)
+        }
+      })
+    },
+    animateCountUp() {
+      var self = this
+      for (var i = 0; i < this.stats.length; i++) {
+        (function (index) {
+          var stat = self.stats[index]
+          var target = stat.value
+          if (target === 0) {
+            self.$set(self.stats[index], 'display', 0)
+            return
+          }
+          var duration = 1500
+          var startTime = null
+
+          function easeOutCubic(t) {
+            return 1 - Math.pow(1 - t, 3)
+          }
+
+          function step(timestamp) {
+            if (!startTime) startTime = timestamp
+            var progress = Math.min((timestamp - startTime) / duration, 1)
+            var easedProgress = easeOutCubic(progress)
+            self.$set(self.stats[index], 'display', Math.round(easedProgress * target))
+            if (progress < 1) {
+              requestAnimationFrame(step)
+            }
+          }
+
+          requestAnimationFrame(step)
+        })(i)
+      }
     }
   }
 }

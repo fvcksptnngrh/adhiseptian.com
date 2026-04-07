@@ -39,7 +39,8 @@ export default {
     { src: '~/plugins/theme.client.js', mode: 'client' },
     { src: '~/plugins/supabase.client.js', mode: 'client' },
     { src: '~/plugins/aos.client.js', mode: 'client' },
-    { src: '~/plugins/gsap.client.js', mode: 'client' }
+    { src: '~/plugins/gsap.client.js', mode: 'client' },
+    { src: '~/plugins/tracking.client.js', mode: 'client' }
   ],
 
   buildModules: [],
@@ -53,7 +54,8 @@ export default {
   serverMiddleware: process.env.NODE_ENV === 'development' ? [
     { path: '/api/wakatime', handler: './server-middleware/wakatime.js' },
     { path: '/api/github', handler: './server-middleware/github.js' },
-    { path: '/api/guestbook', handler: './server-middleware/guestbook.js' }
+    { path: '/api/guestbook', handler: './server-middleware/guestbook.js' },
+    { path: '/api/engagements', handler: './server-middleware/engagements.js' }
   ] : [],
 
   publicRuntimeConfig: {
