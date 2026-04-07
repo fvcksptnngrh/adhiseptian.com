@@ -367,10 +367,14 @@ export default {
   border-radius: 10px;
   background: $bg-elevated;
   transition: border-color $transition-fast, transform $transition-fast;
+  touch-action: pan-y;
 
   &:hover {
     border-color: var(--accent-cyan);
-    transform: translateY(-2px);
+
+    @media (min-width: 769px) {
+      transform: translateY(-2px);
+    }
   }
 
   &__header {
