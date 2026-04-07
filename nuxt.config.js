@@ -20,7 +20,7 @@ export default {
     ],
     __dangerouslyDisableSanitizers: ['script'],
     link: [
-      { rel: 'icon', type: 'image/png', href: '/favicon.jpeg' },
+      { rel: 'icon', type: 'image/png', href: '/favicon.png' },
       { rel: 'preconnect', href: 'https://cdn.simpleicons.org' },
       { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
       { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: true },
