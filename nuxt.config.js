@@ -1,5 +1,5 @@
 export default {
-  target: 'server',
+  target: 'static',
 
   head: {
     title: 'Adhi Septian Nugroho — Frontend Developer',
@@ -50,11 +50,11 @@ export default {
     scss: ['~/assets/scss/_variables.scss']
   },
 
-  serverMiddleware: [
+  serverMiddleware: process.env.NODE_ENV === 'development' ? [
     { path: '/api/wakatime', handler: './server-middleware/wakatime.js' },
     { path: '/api/github', handler: './server-middleware/github.js' },
     { path: '/api/guestbook', handler: './server-middleware/guestbook.js' }
-  ],
+  ] : [],
 
   publicRuntimeConfig: {
     supabaseUrl: process.env.SUPABASE_URL || '',
