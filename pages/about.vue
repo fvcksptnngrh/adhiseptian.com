@@ -173,7 +173,12 @@ export default {
   },
   head() {
     return {
-      title: 'About — Adhi Septian Nugroho'
+      title: 'About — Adhi Septian Nugroho',
+      meta: [
+        { hid: 'description', name: 'description', content: 'Learn more about Adhi Septian Nugroho — Frontend Developer, Informatics Engineering student at UKSW, and intern at Alfagift.' },
+        { hid: 'og:title', property: 'og:title', content: 'About — Adhi Septian Nugroho' },
+        { hid: 'og:description', property: 'og:description', content: 'Frontend Developer, Informatics Engineering student at UKSW, and intern at Alfagift.' }
+      ]
     }
   }
 }

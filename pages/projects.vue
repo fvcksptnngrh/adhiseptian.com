@@ -143,7 +143,12 @@ export default {
   },
   head() {
     return {
-      title: 'Projects — Adhi Septian Nugroho'
+      title: 'Projects — Adhi Septian Nugroho',
+      meta: [
+        { hid: 'description', name: 'description', content: 'A collection of projects built by Adhi Septian Nugroho — web apps, tools, and experiments with Vue, React, and more.' },
+        { hid: 'og:title', property: 'og:title', content: 'Projects — Adhi Septian Nugroho' },
+        { hid: 'og:description', property: 'og:description', content: 'A collection of projects built with Vue, React, and more.' }
+      ]
     }
   }
 }

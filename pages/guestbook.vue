@@ -290,7 +290,12 @@ export default {
   },
   head() {
     return {
-      title: 'Guestbook — Adhi Septian Nugroho'
+      title: 'Guestbook — Adhi Septian Nugroho',
+      meta: [
+        { hid: 'description', name: 'description', content: 'Leave a message, say hi, or share feedback on Adhi Septian Nugroho\'s portfolio guestbook.' },
+        { hid: 'og:title', property: 'og:title', content: 'Guestbook — Adhi Septian Nugroho' },
+        { hid: 'og:description', property: 'og:description', content: 'Leave a message or share feedback on the guestbook.' }
+      ]
     }
   }
 }

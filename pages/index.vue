@@ -178,7 +178,14 @@ export default {
   },
   head() {
     return {
-      title: 'Adhi Septian Nugroho — Frontend Developer'
+      title: 'Adhi Septian Nugroho — Frontend Developer',
+      meta: [
+        { hid: 'description', name: 'description', content: 'Frontend Developer building clean, fast web apps with Vue, Nuxt, and React. Currently interning at Alfagift.' },
+        { hid: 'og:title', property: 'og:title', content: 'Adhi Septian Nugroho — Frontend Developer' },
+        { hid: 'og:description', property: 'og:description', content: 'Frontend Developer building clean, fast web apps with Vue, Nuxt, and React.' },
+        { hid: 'og:type', property: 'og:type', content: 'website' },
+        { name: 'twitter:card', content: 'summary' }
+      ]
     }
   }
 }

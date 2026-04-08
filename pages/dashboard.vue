@@ -35,7 +35,14 @@ export default {
   name: 'DashboardPage',
   components: { Block, CodingInsights, GitHubStats, EngagementStats },
   head() {
-    return { title: 'Dashboard — Adhi Septian Nugroho' }
+    return {
+      title: 'Dashboard — Adhi Septian Nugroho',
+      meta: [
+        { hid: 'description', name: 'description', content: 'Real-time coding stats, GitHub activity, and engagement metrics from Adhi Septian Nugroho.' },
+        { hid: 'og:title', property: 'og:title', content: 'Dashboard — Adhi Septian Nugroho' },
+        { hid: 'og:description', property: 'og:description', content: 'Real-time coding stats, GitHub activity, and engagement metrics.' }
+      ]
+    }
   }
 }
 </script>
