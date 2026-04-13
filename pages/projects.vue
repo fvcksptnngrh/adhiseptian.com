@@ -62,30 +62,30 @@ export default {
       projects: [
         {
           id: 1, number: '01',
+          title: 'Aplikasi Pesanan Online',
+          role: 'Frontend Developer',
+          category: 'Web App',
+          tech: ['Vue.js', 'Nuxt.js', 'JavaScript', 'Bootstrap Vue'],
+          url: 'https://play.google.com/store/apps/details?id=com.alfamart.apo&hl=id'
+        },
+        {
+          id: 2, number: '02',
           title: 'InstaRoaster',
           role: 'Full Stack Developer',
           category: 'Web App',
           tech: ['React', 'Tailwind CSS', 'TypeScript', 'AI'],
-          url: 'https://github.com/fvcksptnngrh/InstaRoast'
+          url: 'https://instagram-roast.vercel.app/'
         },
         {
-          id: 2, number: '02',
+          id: 3, number: '03',
           title: 'WeatherBebe',
           role: 'Frontend Developer',
           category: 'Frontend',
           tech: ['React', 'Vite', 'Tailwind CSS'],
-          url: 'https://github.com/fvcksptnngrh/Simple-Weather-App'
+          url: 'https://weatherbebe.netlify.app/'
         },
         {
           id: 3, number: '03',
-          title: 'Task Roadmap',
-          role: 'Full Stack Developer',
-          category: 'Web App',
-          tech: ['JavaScript', 'Node.js'],
-          url: 'https://github.com/fvcksptnngrh/task-roadmap'
-        },
-        {
-          id: 4, number: '04',
           title: 'Microservices Ticket Booking',
           role: 'Backend Developer',
           category: 'Backend',
@@ -105,33 +105,9 @@ export default {
           title: 'Creative Portfolio Hub',
           role: 'Frontend Developer',
           category: 'Frontend',
-          tech: ['React', 'CSS'],
-          url: 'https://github.com/fvcksptnngrh/creative-portofolio-hub'
+          tech: ['Vue.js', 'CSS'],
+          url: 'https://adhiseptian.me'
         },
-        {
-          id: 7, number: '07',
-          title: 'Honey',
-          role: 'Frontend Developer',
-          category: 'Web App',
-          tech: ['Vue.js'],
-          url: 'https://github.com/fvcksptnngrh/honey'
-        },
-        {
-          id: 8, number: '08',
-          title: 'ETL-TTU',
-          role: 'Backend Developer',
-          category: 'Backend',
-          tech: ['Java'],
-          url: 'https://github.com/fvcksptnngrh/ETL-TTU'
-        },
-        {
-          id: 9, number: '09',
-          title: 'Tic Tac Toe',
-          role: 'Developer',
-          category: 'Frontend',
-          tech: ['JavaScript'],
-          url: 'https://github.com/fvcksptnngrh/Tic-Tac-Toe'
-        }
       ]
     }
   },
