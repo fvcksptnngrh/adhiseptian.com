@@ -15,7 +15,7 @@
         <div class="about-text">
           <p>
             I'm <strong>Adhi Septian Nugroho</strong>, a frontend developer and Informatics Engineering student
-            at Universitas Kristen Satya Wacana (UKSW) in Semarang, Indonesia.
+            at Universitas Kristen Satya Wacana (UKSW) in Salatiga, Indonesia.
           </p>
           <p>
             Currently interning at <a href="https://www.alfagift.id" target="_blank" rel="noopener" class="about-link">Alfagift — Global Loyalty Indonesia</a>,

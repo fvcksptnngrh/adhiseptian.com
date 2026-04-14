@@ -1,7 +1,6 @@
 <template>
   <div class="home-page">
     <!-- Background layers — lives outside content-wrap so they never get clipped -->
-    <div ref="heroBgGrid" class="hero__bg-grid"></div>
     <div ref="heroBgGlow" class="hero__bg-glow"></div>
     <div ref="heroBgGlow2" class="hero__bg-glow2"></div>
 
@@ -171,7 +170,6 @@ export default {
       }
 
       // Background layers — parallax drift on scroll
-      addTrigger(this.$refs.heroBgGrid, { y: 300 })
       addTrigger(this.$refs.heroBgGlow, { y: 250, x: -80 })
       addTrigger(this.$refs.heroBgGlow2, { y: 280, x: 100 })
     }
@@ -216,25 +214,6 @@ export default {
 }
 
 // ── Hero background layers ──
-// Background layers — positioned relative to home-page, no clipping
-.hero__bg-grid {
-  position: absolute;
-  top: -50px;
-  left: -80px;
-  right: -80px;
-  height: 600px;
-  background-image:
-    linear-gradient(var(--border-color) 1px, transparent 1px),
-    linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
-  background-size: 48px 48px;
-  opacity: 0.5;
-  pointer-events: none;
-  will-change: transform;
-  z-index: 0;
-  mask-image: radial-gradient(ellipse 80% 70% at 35% 40%, black 10%, transparent 60%);
-  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 35% 40%, black 10%, transparent 60%);
-}
-
 .hero__bg-glow {
   position: absolute;
   top: -80px;
@@ -485,11 +464,6 @@ export default {
 
 // ── Mobile optimizations ──
 @media (max-width: 768px) {
-  .hero__bg-grid {
-    height: 350px;
-    background-size: 32px 32px;
-    opacity: 0.3;
-  }
   .hero__bg-glow {
     width: 350px;
     height: 350px;

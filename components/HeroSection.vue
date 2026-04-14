@@ -53,7 +53,7 @@ export default {
         'Building Web Apps with Vue & Nuxt',
         'React, TypeScript & Tailwind CSS',
         'Turning Ideas Into Real Solutions',
-        'Based in Semarang, Indonesia'
+        'Based in Salatiga, Indonesia'
       ],
       phraseIndex: 0,
       charIndex: 0,
