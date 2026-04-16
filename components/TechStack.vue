@@ -4,8 +4,8 @@
     <!-- Row 1 — scrolls LEFT -->
     <div ref="row1El" class="marquee-row">
       <div class="marquee-track marquee-track--left">
-        <div v-for="(tech, i) in repeat(row1, 4)" :key="'r1-' + i" class="tech-item">
-          <img :src="tech.icon" :alt="tech.name" class="tech-icon" />
+        <div v-for="(tech, i) in repeat(row1, 2)" :key="'r1-' + i" class="tech-item">
+          <img :src="tech.icon" :alt="tech.name" class="tech-icon" width="30" height="30" loading="lazy" decoding="async" />
           <span class="tech-name">{{ tech.name }}</span>
         </div>
       </div>
@@ -14,8 +14,8 @@
     <!-- Row 2 — scrolls RIGHT -->
     <div ref="row2El" class="marquee-row">
       <div class="marquee-track marquee-track--right">
-        <div v-for="(tech, i) in repeat(row2, 4)" :key="'r2-' + i" class="tech-item">
-          <img :src="tech.icon" :alt="tech.name" class="tech-icon" />
+        <div v-for="(tech, i) in repeat(row2, 2)" :key="'r2-' + i" class="tech-item">
+          <img :src="tech.icon" :alt="tech.name" class="tech-icon" width="30" height="30" loading="lazy" decoding="async" />
           <span class="tech-name">{{ tech.name }}</span>
         </div>
       </div>
@@ -30,24 +30,24 @@ export default {
   data() {
     return {
       row1: [
-        { name: 'Vue.js',       icon: 'https://cdn.simpleicons.org/vuedotjs/4FC08D' },
-        { name: 'Nuxt.js',      icon: 'https://api.iconify.design/logos/nuxt-icon.svg' },
-        { name: 'React',        icon: 'https://cdn.simpleicons.org/react/61DAFB' },
-        { name: 'TypeScript',   icon: 'https://cdn.simpleicons.org/typescript/3178C6' },
-        { name: 'JavaScript',   icon: 'https://cdn.simpleicons.org/javascript/F7DF1E' },
-        { name: 'Tailwind CSS', icon: 'https://cdn.simpleicons.org/tailwindcss/06B6D4' },
-        { name: 'Figma',        icon: 'https://cdn.simpleicons.org/figma/F24E1E' },
-        { name: 'Git',          icon: 'https://cdn.simpleicons.org/git/F05032' }
+        { name: 'Vue.js',       icon: '/icons/tech/vue.svg' },
+        { name: 'Nuxt.js',      icon: '/icons/tech/nuxt.svg' },
+        { name: 'React',        icon: '/icons/tech/react.svg' },
+        { name: 'TypeScript',   icon: '/icons/tech/typescript.svg' },
+        { name: 'JavaScript',   icon: '/icons/tech/javascript.svg' },
+        { name: 'Tailwind CSS', icon: '/icons/tech/tailwind.svg' },
+        { name: 'Figma',        icon: '/icons/tech/figma.svg' },
+        { name: 'Git',          icon: '/icons/tech/git.svg' }
       ],
       row2: [
-        { name: 'Laravel',      icon: 'https://cdn.simpleicons.org/laravel/FF2D20' },
-        { name: 'PHP',          icon: 'https://cdn.simpleicons.org/php/777BB4' },
-        { name: 'Spring Boot',  icon: 'https://cdn.simpleicons.org/springboot/6DB33F' },
-        { name: 'Java',         icon: 'https://cdn.simpleicons.org/openjdk/ED8B00' },
-        { name: 'Node.js',      icon: 'https://cdn.simpleicons.org/nodedotjs/339933' },
-        { name: 'Python',       icon: 'https://cdn.simpleicons.org/python/3776AB' },
-        { name: 'MySQL',        icon: 'https://cdn.simpleicons.org/mysql/4479A1' },
-        { name: 'Docker',       icon: 'https://cdn.simpleicons.org/docker/2496ED' }
+        { name: 'Laravel',      icon: '/icons/tech/laravel.svg' },
+        { name: 'PHP',          icon: '/icons/tech/php.svg' },
+        { name: 'Spring Boot',  icon: '/icons/tech/springboot.svg' },
+        { name: 'Java',         icon: '/icons/tech/java.svg' },
+        { name: 'Node.js',      icon: '/icons/tech/nodejs.svg' },
+        { name: 'Python',       icon: '/icons/tech/python.svg' },
+        { name: 'MySQL',        icon: '/icons/tech/mysql.svg' },
+        { name: 'Docker',       icon: '/icons/tech/docker.svg' }
       ]
     }
   },
@@ -170,24 +170,19 @@ export default {
   gap: 10px;
   will-change: transform;
 
-  // 6 copies total: animate across 1 set = 16.666%
+  // 2 copies total: animate across 1 set = 50%
   &--left {
-    animation: scroll-left 40s linear infinite;
+    animation: scroll-x 40s linear infinite;
   }
 
   &--right {
-    animation: scroll-right 40s linear infinite;
+    animation: scroll-x 40s linear infinite reverse;
   }
 }
 
-@keyframes scroll-left {
+@keyframes scroll-x {
   0%   { transform: translateX(0); }
-  100% { transform: translateX(calc(-100% / 4)); }
-}
-
-@keyframes scroll-right {
-  0%   { transform: translateX(calc(-100% / 4)); }
-  100% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 .tech-item {
