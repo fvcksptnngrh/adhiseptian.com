@@ -4,7 +4,7 @@
     <!-- Row 1 — scrolls LEFT -->
     <div ref="row1El" class="marquee-row">
       <div class="marquee-track marquee-track--left">
-        <div v-for="(tech, i) in repeat(row1, 2)" :key="'r1-' + i" class="tech-item">
+        <div v-for="(tech, i) in repeat(row1, 4)" :key="'r1-' + i" class="tech-item">
           <img :src="tech.icon" :alt="tech.name" class="tech-icon" width="30" height="30" loading="lazy" decoding="async" />
           <span class="tech-name">{{ tech.name }}</span>
         </div>
@@ -14,7 +14,7 @@
     <!-- Row 2 — scrolls RIGHT -->
     <div ref="row2El" class="marquee-row">
       <div class="marquee-track marquee-track--right">
-        <div v-for="(tech, i) in repeat(row2, 2)" :key="'r2-' + i" class="tech-item">
+        <div v-for="(tech, i) in repeat(row2, 4)" :key="'r2-' + i" class="tech-item">
           <img :src="tech.icon" :alt="tech.name" class="tech-icon" width="30" height="30" loading="lazy" decoding="async" />
           <span class="tech-name">{{ tech.name }}</span>
         </div>
