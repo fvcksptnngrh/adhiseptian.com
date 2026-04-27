@@ -19,7 +19,6 @@ module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*')
 
   const apiKey = process.env.WAKATIME_API_KEY
-  console.log('[wakatime] API key present:', !!apiKey)
 
   if (!apiKey) {
     res.statusCode = 200
@@ -29,7 +28,6 @@ module.exports = async (req, res) => {
   const trimmed = apiKey.trim()
   const encoded = Buffer.from(trimmed).toString('base64')
   const headers = { Authorization: `Basic ${encoded}` }
-  console.log('[wakatime] Key starts with:', trimmed.substring(0, 10))
 
   try {
     const [stats7d, statsToday, allTime] = await Promise.all([
@@ -57,12 +55,6 @@ module.exports = async (req, res) => {
         }
       }
     }
-
-    console.log('[wakatime] stats response keys:', Object.keys(stats))
-    console.log('[wakatime] stats.data keys:', stats.data ? Object.keys(stats.data) : 'NO DATA')
-    console.log('[wakatime] stats.data.languages:', JSON.stringify((stats.data || {}).languages || []).substring(0, 500))
-    console.log('[wakatime] stats.data.human_readable_total:', (stats.data || {}).human_readable_total)
-    console.log('[wakatime] allTime response:', JSON.stringify(allTime).substring(0, 300))
 
     // Merge AI-related entries into regular coding stats
     var s = stats.data || {}
@@ -185,7 +177,6 @@ module.exports = async (req, res) => {
       allTime: allTime.data
     }))
   } catch (err) {
-    console.log('[wakatime] Error:', err.message)
     res.statusCode = 500
     res.end(JSON.stringify({ configured: true, error: err.message }))
   }

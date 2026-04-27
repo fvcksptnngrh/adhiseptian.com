@@ -6,6 +6,8 @@ export default function ({ $config }, inject) {
 
   if (!url || !key) {
     console.warn('[supabase] Missing SUPABASE_URL or SUPABASE_ANON_KEY')
+    inject('supabase', null)
+    return
   }
 
   var supabase = createClient(url, key)

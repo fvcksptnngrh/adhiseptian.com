@@ -119,8 +119,6 @@
 </template>
 
 <script>
-import AOS from 'aos'
-
 var AUTHOR_ID = '2227602c-eefd-46d7-b866-45b83511a220'
 
 export default {
@@ -132,6 +130,7 @@ export default {
       success: false,
       error: null,
       user: null,
+      supabaseClient: null,
       messages: [],
       form: {
         message: ''
@@ -139,30 +138,50 @@ export default {
     }
   },
   mounted() {
-    var self = this
     this.fetchMessages()
-
-    if (this.$supabase) {
-      console.log('[guestbook] URL hash:', window.location.hash ? 'present' : 'none')
-      console.log('[guestbook] Supabase client:', !!this.$supabase)
-
-      this.$supabase.auth.onAuthStateChange(function (event, session) {
-        console.log('[guestbook] Auth event:', event, 'Session:', !!session)
-        if (session) {
-          console.log('[guestbook] User:', session.user.email, session.user.user_metadata)
-        }
-        self.setUser(session)
-        self.$nextTick(function () {
-          if (typeof AOS !== 'undefined') AOS.refresh()
-        })
-      })
-
-      this.checkAuth()
-    } else {
-      console.warn('[guestbook] $supabase not available!')
+    this.initAuth()
+  },
+  beforeDestroy() {
+    if (this._authSubscription) {
+      this._authSubscription.unsubscribe()
     }
   },
   methods: {
+    async getSupabase() {
+      if (this.supabaseClient) return this.supabaseClient
+
+      var url = this.$config.supabaseUrl || ''
+      var key = this.$config.supabaseKey || ''
+
+      if (!url || !key) {
+        return null
+      }
+
+      var module = await import('@supabase/supabase-js')
+      this.supabaseClient = module.createClient(url, key)
+      return this.supabaseClient
+    },
+
+    async initAuth() {
+      var self = this
+      var supabase = await this.getSupabase()
+      if (!supabase) return
+
+      var listener = supabase.auth.onAuthStateChange(function (event, session) {
+        self.setUser(session)
+        self.refreshAnimations()
+      })
+      this._authSubscription = listener.data ? listener.data.subscription : null
+
+      this.checkAuth()
+    },
+
+    refreshAnimations() {
+      if (this.$refreshAos) {
+        this.$refreshAos().catch(function () {})
+      }
+    },
+
     setUser(session) {
       if (session && session.user) {
         var u = session.user
@@ -179,20 +198,25 @@ export default {
     },
 
     async checkAuth() {
-      if (!this.$supabase) return
+      var supabase = await this.getSupabase()
+      if (!supabase) return
       try {
-        var result = await this.$supabase.auth.getSession()
+        var result = await supabase.auth.getSession()
         var session = result.data ? result.data.session : null
         this.setUser(session)
       } catch (e) {
-        console.warn('[guestbook] Auth check failed:', e.message)
+        this.setUser(null)
       }
     },
 
     async signIn(provider) {
-      if (!this.$supabase) return
+      var supabase = await this.getSupabase()
+      if (!supabase) {
+        this.error = 'Sign in is not configured'
+        return
+      }
       try {
-        await this.$supabase.auth.signInWithOAuth({
+        await supabase.auth.signInWithOAuth({
           provider: provider,
           options: {
             redirectTo: window.location.origin + '/guestbook'
@@ -204,8 +228,9 @@ export default {
     },
 
     async signOut() {
-      if (!this.$supabase) return
-      await this.$supabase.auth.signOut()
+      var supabase = await this.getSupabase()
+      if (!supabase) return
+      await supabase.auth.signOut()
       this.user = null
     },
 
@@ -221,7 +246,7 @@ export default {
         this.error = 'Failed to load messages'
       } finally {
         this.loading = false
-        this.$nextTick(function () { AOS.refresh() })
+        this.refreshAnimations()
       }
     },
 
@@ -232,7 +257,13 @@ export default {
       this.success = false
 
       try {
-        var result = await this.$supabase.auth.getSession()
+        var supabase = await this.getSupabase()
+        if (!supabase) {
+          this.error = 'Sign in is not configured'
+          return
+        }
+
+        var result = await supabase.auth.getSession()
         var session = result.data ? result.data.session : null
         if (!session) {
           this.error = 'Session expired — please sign in again'
@@ -241,7 +272,7 @@ export default {
           return
         }
 
-        var insertResult = await this.$supabase
+        var insertResult = await supabase
           .from('guestbook')
           .insert({
             user_id: this.user.id,

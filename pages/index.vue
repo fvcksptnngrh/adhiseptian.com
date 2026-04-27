@@ -127,7 +127,7 @@ export default {
   },
   mounted() {
     this.$nextTick(function () {
-      this.initParallax()
+      this.scheduleParallax()
     })
   },
   beforeDestroy() {
@@ -141,13 +141,22 @@ export default {
     isMobile() {
       return window.innerWidth < 768
     },
-    initParallax() {
-      var gsap = this.$gsap
-      var ST = this.$ScrollTrigger
-      if (!gsap || !ST) return
+    scheduleParallax() {
+      var self = this
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(function () { self.initParallax() }, { timeout: 1500 })
+      } else {
+        setTimeout(function () { self.initParallax() }, 300)
+      }
+    },
+    async initParallax() {
+      if (!this.$loadGsap || this.isMobile()) return
 
       // Skip heavy parallax on mobile — causes jank and battery drain
-      if (this.isMobile()) return
+      var bundle = await this.$loadGsap()
+      if (this._isDestroyed) return
+
+      var gsap = bundle.gsap
 
       this._heroTriggers = []
       var heroEl = this.$refs.hero

@@ -1,5 +1,5 @@
 <template>
-  <div class="custom-cursor" v-if="!isMobile">
+  <div class="custom-cursor" v-if="enabled">
     <div class="cursor-dot" ref="dot"></div>
     <div class="cursor-ring" ref="ring"></div>
   </div>
@@ -10,15 +10,38 @@ export default {
   name: 'CustomCursor',
   data() {
     return {
-      isMobile: true
+      enabled: false
     }
   },
   mounted() {
-    this.isMobile = window.innerWidth <= 768
-    if (this.isMobile) return
+    var isMobile = window.innerWidth <= 768
+    var prefersReducedMotion = window.matchMedia &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+    this.enabled = !isMobile && !prefersReducedMotion
+    if (!this.enabled) return
+
+    document.documentElement.classList.add('custom-cursor-enabled')
     this.$nextTick(() => {
       this.initCursor()
     })
+  },
+  beforeDestroy() {
+    document.documentElement.classList.remove('custom-cursor-enabled')
+
+    if (this._animationFrame) {
+      cancelAnimationFrame(this._animationFrame)
+    }
+
+    if (this._onMouseMove) {
+      document.removeEventListener('mousemove', this._onMouseMove)
+    }
+    if (this._onMouseOver) {
+      document.removeEventListener('mouseover', this._onMouseOver)
+    }
+    if (this._onMouseOut) {
+      document.removeEventListener('mouseout', this._onMouseOut)
+    }
   },
   methods: {
     initCursor() {
@@ -31,32 +54,36 @@ export default {
       let ringX = mouseX
       let ringY = mouseY
 
-      document.addEventListener('mousemove', (e) => {
+      this._onMouseMove = (e) => {
         mouseX = e.clientX
         mouseY = e.clientY
         dot.style.transform = `translate(${mouseX - 4}px, ${mouseY - 4}px)`
-      })
+      }
+      document.addEventListener('mousemove', this._onMouseMove)
 
       const animate = () => {
         ringX += (mouseX - ringX) * 0.12
         ringY += (mouseY - ringY) * 0.12
         ring.style.transform = `translate(${ringX - 16}px, ${ringY - 16}px)`
-        requestAnimationFrame(animate)
+        this._animationFrame = requestAnimationFrame(animate)
       }
       animate()
 
-      document.addEventListener('mouseover', (e) => {
+      this._onMouseOver = (e) => {
         if (e.target.closest('a, button, .project-card, .filter-btn, .skill-tag')) {
           ring.classList.add('cursor-hover')
           dot.classList.add('cursor-hover')
         }
-      })
-      document.addEventListener('mouseout', (e) => {
+      }
+      document.addEventListener('mouseover', this._onMouseOver)
+
+      this._onMouseOut = (e) => {
         if (e.target.closest('a, button, .project-card, .filter-btn, .skill-tag')) {
           ring.classList.remove('cursor-hover')
           dot.classList.remove('cursor-hover')
         }
-      })
+      }
+      document.addEventListener('mouseout', this._onMouseOut)
     }
   }
 }

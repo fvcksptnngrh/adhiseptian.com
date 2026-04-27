@@ -10,8 +10,10 @@
       <!-- Logo -->
       <nuxt-link to="/" class="flex items-center gap-2 group" @click.native="menuOpen = false">
         <img
-          :src="isDark ? require('~/assets/images/logo-white.png') : require('~/assets/images/logo-black.png')"
-          alt="logo"
+          :src="logoSrc"
+          alt="Adhi Septian logo"
+          width="52"
+          height="48"
           class="logo-img"
         />
         <span class="text-base font-bold text-foreground">
@@ -162,6 +164,11 @@ export default {
       ]
     }
   },
+  computed: {
+    logoSrc() {
+      return this.isDark ? '/brand-logo-white.png' : '/brand-logo-black.png'
+    }
+  },
   mounted() {
     window.addEventListener('scroll', this.handleScroll)
     this.isDark = !document.documentElement.classList.contains('light')
@@ -194,9 +201,8 @@ export default {
 
 <style lang="scss" scoped>
 .logo-img {
-  height: 5rem;
-  max-height: 100%;
-  width: auto;
+  width: 52px;
+  height: 48px;
   object-fit: contain;
 }
 

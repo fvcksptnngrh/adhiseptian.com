@@ -27,12 +27,17 @@ function supabaseRequest(method, path, headers, body) {
 module.exports = function (req, res) {
   res.setHeader('Content-Type', 'application/json')
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
 
   if (req.method === 'OPTIONS') {
     res.statusCode = 200
     return res.end()
+  }
+
+  if (req.method !== 'GET') {
+    res.statusCode = 405
+    return res.end(JSON.stringify({ error: 'Method not allowed' }))
   }
 
   var supabaseUrl = process.env.SUPABASE_URL
@@ -43,74 +48,20 @@ module.exports = function (req, res) {
     return res.end(JSON.stringify({ error: 'Supabase not configured' }))
   }
 
-  var baseHeaders = {
+  var headers = {
     'apikey': supabaseKey,
     'Authorization': 'Bearer ' + supabaseKey,
     'Content-Type': 'application/json'
   }
 
-  // GET — fetch all messages
-  if (req.method === 'GET') {
-    var endpoint = supabaseUrl + '/rest/v1/guestbook?select=*&order=created_at.desc&limit=50'
-    supabaseRequest('GET', endpoint, baseHeaders, null)
-      .then(function (result) {
-        res.statusCode = result.status
-        res.end(JSON.stringify(result.data))
-      })
-      .catch(function (err) {
-        res.statusCode = 500
-        res.end(JSON.stringify({ error: err.message }))
-      })
-    return
-  }
-
-  // POST — add new message
-  if (req.method === 'POST') {
-    var body = ''
-    req.on('data', function (chunk) { body += chunk })
-    req.on('end', function () {
-      try {
-        var parsed = JSON.parse(body)
-        var name = (parsed.name || '').trim()
-        var message = (parsed.message || '').trim()
-
-        if (!name || !message) {
-          res.statusCode = 400
-          return res.end(JSON.stringify({ error: 'Name and message are required' }))
-        }
-
-        if (name.length > 50) {
-          res.statusCode = 400
-          return res.end(JSON.stringify({ error: 'Name too long (max 50 chars)' }))
-        }
-
-        if (message.length > 500) {
-          res.statusCode = 400
-          return res.end(JSON.stringify({ error: 'Message too long (max 500 chars)' }))
-        }
-
-        var postHeaders = Object.assign({}, baseHeaders, {
-          'Prefer': 'return=representation'
-        })
-
-        var endpoint = supabaseUrl + '/rest/v1/guestbook'
-        supabaseRequest('POST', endpoint, postHeaders, { name: name, message: message })
-          .then(function (result) {
-            res.statusCode = result.status
-            res.end(JSON.stringify(result.data))
-          })
-          .catch(function (err) {
-            res.statusCode = 500
-            res.end(JSON.stringify({ error: err.message }))
-          })
-      } catch (e) {
-        res.statusCode = 400
-        res.end(JSON.stringify({ error: 'Invalid JSON' }))
-      }
+  var endpoint = supabaseUrl + '/rest/v1/guestbook?select=*&order=created_at.desc&limit=50'
+  supabaseRequest('GET', endpoint, headers, null)
+    .then(function (result) {
+      res.statusCode = result.status
+      res.end(JSON.stringify(result.data))
     })
-    return
-  }
-
-  res.statusCode = 405
-  res.end(JSON.stringify({ error: 'Method not allowed' }))
+    .catch(function (err) {
+      res.statusCode = 500
+      res.end(JSON.stringify({ error: err.message }))
+    })
 }

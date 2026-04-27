@@ -53,7 +53,7 @@ export default {
   },
   mounted() {
     this.$nextTick(function () {
-      this.initParallax()
+      this.scheduleParallax()
     })
   },
   beforeDestroy() {
@@ -64,13 +64,22 @@ export default {
     }
   },
   methods: {
-    initParallax() {
-      var gsap = this.$gsap
-      var ST = this.$ScrollTrigger
-      if (!gsap || !ST) return
+    scheduleParallax() {
+      var self = this
+      if (window.requestIdleCallback) {
+        window.requestIdleCallback(function () { self.initParallax() }, { timeout: 1500 })
+      } else {
+        setTimeout(function () { self.initParallax() }, 300)
+      }
+    },
+    async initParallax() {
+      if (!this.$loadGsap || window.innerWidth < 768) return
 
       // Skip scroll-linked parallax on mobile — CSS marquee is enough
-      if (window.innerWidth < 768) return
+      var bundle = await this.$loadGsap()
+      if (this._isDestroyed) return
+
+      var gsap = bundle.gsap
 
       this._triggers = []
 

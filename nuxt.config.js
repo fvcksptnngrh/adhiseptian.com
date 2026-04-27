@@ -1,3 +1,5 @@
+const path = require('path')
+
 export default {
   target: 'static',
 
@@ -38,7 +40,6 @@ export default {
 
   plugins: [
     { src: '~/plugins/theme.client.js', mode: 'client' },
-    { src: '~/plugins/supabase.client.js', mode: 'client' },
     { src: '~/plugins/aos.client.js', mode: 'client' },
     { src: '~/plugins/gsap.client.js', mode: 'client' },
     { src: '~/plugins/tracking.client.js', mode: 'client' }
@@ -53,10 +54,10 @@ export default {
   },
 
   serverMiddleware: process.env.NODE_ENV === 'development' ? [
-    { path: '/api/wakatime', handler: './server-middleware/wakatime.js' },
-    { path: '/api/github', handler: './server-middleware/github.js' },
-    { path: '/api/guestbook', handler: './server-middleware/guestbook.js' },
-    { path: '/api/engagements', handler: './server-middleware/engagements.js' }
+    { path: '/api/wakatime', handler: path.resolve(__dirname, 'server-middleware/wakatime.js') },
+    { path: '/api/github', handler: path.resolve(__dirname, 'server-middleware/github.js') },
+    { path: '/api/guestbook', handler: path.resolve(__dirname, 'server-middleware/guestbook.js') },
+    { path: '/api/engagements', handler: path.resolve(__dirname, 'server-middleware/engagements.js') }
   ] : [],
 
   publicRuntimeConfig: {
@@ -67,7 +68,9 @@ export default {
   build: {
     transpile: ['gsap', 'tailwind-merge', 'clsx', '@supabase/supabase-js', '@supabase/node-fetch', '@supabase/postgrest-js', '@supabase/realtime-js', '@supabase/storage-js', '@supabase/functions-js', '@supabase/gotrue-js', '@supabase/auth-js', 'iceberg-js', '@supabase/phoenix'],
     postcss: {
-      plugins: { tailwindcss: {}, autoprefixer: {} }
+      postcssOptions: {
+        plugins: { tailwindcss: {}, autoprefixer: {} }
+      }
     }
   },
 
