@@ -22,8 +22,9 @@
             where I build production frontend applications using Nuxt.js for one of Indonesia's largest retail loyalty platforms.
           </p>
           <p>
-            Outside of work, I enjoy experimenting with new frameworks, contributing to open source,
-            and exploring the intersection of design and engineering.
+            Outside of work, I sharpen my algorithmic thinking through competitive programming and currently rank #19 on my university's
+            <a href="https://open.kattis.com/affiliations/uksw.edu" target="_blank" rel="noopener" class="about-link">Kattis</a>
+            leaderboard, while continuing to explore the intersection of design and engineering.
           </p>
           <div class="about-chips">
             <a href="https://github.com/fvcksptnngrh" target="_blank" rel="noopener" class="about-chip">
@@ -150,9 +151,9 @@ export default {
         },
         {
           id: 2,
-          institution: 'SMK Negeri 2 Salatiga',
-          degree: 'Software Engineering (RPL)',
-          year: '2020 — 2023'
+          institution: 'SMK Negeri Pringsurat',
+          degree: 'Multimedia',
+          year: '2018 — 2021'
         }
       ],
       certifications: [
@@ -167,6 +168,18 @@ export default {
           name: 'SQL (Basic)',
           issuer: 'HackerRank',
           url: 'https://www.hackerrank.com/certificates/iframe/6b9d72d2b427'
+        },
+        {
+          id: 3,
+          name: 'Software Engineer Certificate',
+          issuer: 'HackerRank',
+          url: 'https://www.hackerrank.com/certificates/iframe/98fee14530fa'
+        },
+        {
+          id: 4,
+          name: 'Front-End Development (React)',
+          issuer: 'HackerRank',
+          url: 'https://www.hackerrank.com/certificates/iframe/5c5190755a9e'
         }
       ]
     }
