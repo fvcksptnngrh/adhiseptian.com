@@ -12,8 +12,8 @@
         <img
           :src="logoSrc"
           alt="Adhi Septian logo"
-          width="52"
-          height="48"
+          width="172"
+          height="160"
           class="logo-img"
         />
         <span class="text-base font-bold text-foreground">
@@ -201,8 +201,9 @@ export default {
 
 <style lang="scss" scoped>
 .logo-img {
-  width: 52px;
-  height: 48px;
+  height: 5rem;
+  max-height: 100%;
+  width: auto;
   object-fit: contain;
 }
 

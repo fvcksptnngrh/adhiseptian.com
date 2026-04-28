@@ -53,7 +53,7 @@ export default {
   },
   mounted() {
     this.$nextTick(function () {
-      this.scheduleParallax()
+      this.initParallax()
     })
   },
   beforeDestroy() {
@@ -64,14 +64,6 @@ export default {
     }
   },
   methods: {
-    scheduleParallax() {
-      var self = this
-      if (window.requestIdleCallback) {
-        window.requestIdleCallback(function () { self.initParallax() }, { timeout: 1500 })
-      } else {
-        setTimeout(function () { self.initParallax() }, 300)
-      }
-    },
     async initParallax() {
       if (!this.$loadGsap || window.innerWidth < 768) return
 

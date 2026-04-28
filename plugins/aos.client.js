@@ -20,11 +20,7 @@ function loadAos() {
 }
 
 function scheduleLoad() {
-  if (window.requestIdleCallback) {
-    window.requestIdleCallback(function () { loadAos() })
-  } else {
-    setTimeout(function () { loadAos() }, 1)
-  }
+  setTimeout(function () { loadAos() }, 0)
 }
 
 export default function ({ app }, inject) {
