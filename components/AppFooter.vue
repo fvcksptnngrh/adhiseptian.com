@@ -2,10 +2,7 @@
   <footer class="app-footer">
     <div class="app-footer__inner">
       <p class="app-footer__copy">
-        © {{ year }} Adhi Septian Nugroho. Built with
-        <a href="https://nuxtjs.org" target="_blank" rel="noopener" class="app-footer__link">Nuxt 2</a>
-        &amp;
-        <a href="https://tailwindcss.com" target="_blank" rel="noopener" class="app-footer__link">Tailwind CSS</a>.
+        © {{ year }} Adhi Septian Nugroho.
       </p>
 
       <div class="app-footer__social">
