@@ -2,7 +2,9 @@
   <div class="block-card" data-aos="fade-up">
     <div class="block-header">
       <div class="block-icon-wrap">
-        <span class="block-icon">{{ icon }}</span>
+        <slot name="icon">
+          <span class="block-icon">{{ icon }}</span>
+        </slot>
       </div>
       <div class="block-title-wrap">
         <h2 class="block-title">{{ title }}</h2>
@@ -55,6 +57,7 @@ export default {
   justify-content: center;
   flex-shrink: 0;
   font-size: 15px;
+  color: $text-secondary;
 }
 
 .block-title-wrap {

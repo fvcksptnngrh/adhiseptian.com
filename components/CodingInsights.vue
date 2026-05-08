@@ -4,10 +4,7 @@
     <!-- Header -->
     <div class="ci-header">
       <div class="ci-icon">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-          <polyline points="22 4 12 14.01 9 11.01"/>
-        </svg>
+        <Activity :size="15" :stroke-width="2" />
       </div>
       <div>
         <h2 class="ci-title">Weekly Coding Activities</h2>
@@ -27,7 +24,7 @@
 
     <!-- Not configured -->
     <div v-else-if="!data.configured" class="ci-empty">
-      <span>⏱</span>
+      <Clock :size="28" :stroke-width="1.6" class="ci-empty__icon" />
       <p class="ci-empty__title">WakaTime not connected</p>
       <p class="ci-empty__desc">Add <code>WAKATIME_API_KEY</code> to your <code>.env</code> file.</p>
       <a href="https://wakatime.com/api-key" target="_blank" rel="noopener" class="ci-empty__link">Get API Key →</a>
@@ -35,7 +32,7 @@
 
     <!-- Error or no stats -->
     <div v-else-if="error || !data.stats" class="ci-empty">
-      <span>⚠️</span>
+      <AlertTriangle :size="28" :stroke-width="1.6" class="ci-empty__icon" />
       <p class="ci-empty__title">Could not load stats</p>
       <p class="ci-empty__desc">{{ error || data.error || 'No data returned from WakaTime' }}</p>
     </div>
@@ -108,8 +105,21 @@
 </template>
 
 <script>
+import { Activity, Clock, AlertTriangle } from 'lucide-vue'
+
+const NON_CODING_LANGS = new Set([
+  'other', 'json', 'json5', 'jsonc', 'yaml', 'yml', 'toml', 'ini', 'csv', 'tsv', 'xml',
+  'markdown', 'mdx', 'plain text', 'text', 'restructuredtext',
+  'shell', 'shell script', 'bash', 'sh', 'zsh', 'fish', 'powershell', 'batch', 'cmd',
+  'git config', 'gitignore', 'dotenv', 'env',
+  'properties', 'make', 'makefile', 'dockerfile', 'cmake',
+  'svg', 'image (svg)', 'image', 'log', 'diff', 'patch',
+  'npm config', 'editorconfig', 'http', 'binary', 'csv/tsv'
+])
+
 export default {
   name: 'CodingInsights',
+  components: { Activity, Clock, AlertTriangle },
   data() {
     return { loading: true, error: null, data: {} }
   },
@@ -129,8 +139,22 @@ export default {
       ]
     },
     topLanguages() {
-      if (!this.data.stats?.languages) return []
-      return this.data.stats.languages.slice(0, 5)
+      const langs = this.data.stats?.languages
+      if (!langs || !langs.length) return []
+
+      // Drop non-coding entries (Other, JSON, Bash, YAML, Markdown, etc.)
+      const real = langs.filter(l => !NON_CODING_LANGS.has((l.name || '').toLowerCase()))
+      const top = real.slice(0, 3)
+
+      // Recompute percentages relative to the visible top 3 so bars feel meaningful
+      const totalSecs = top.reduce((sum, l) => sum + (l.total_seconds || 0), 0)
+      if (totalSecs > 0) {
+        return top.map(l => ({
+          ...l,
+          percent: (l.total_seconds / totalSecs) * 100
+        }))
+      }
+      return top
     },
     topEditors() {
       return this.data.stats?.editors?.slice(0, 3) || []
@@ -227,7 +251,10 @@ export default {
   align-items: center;
   gap: 8px;
 
-  span { font-size: 28px; }
+  &__icon {
+    color: $text-muted;
+    margin-bottom: 4px;
+  }
 
   &__title {
     font-weight: 600;

@@ -66,7 +66,7 @@ export default {
   },
 
   build: {
-    transpile: ['gsap', 'tailwind-merge', 'clsx', '@supabase/supabase-js', '@supabase/node-fetch', '@supabase/postgrest-js', '@supabase/realtime-js', '@supabase/storage-js', '@supabase/functions-js', '@supabase/gotrue-js', '@supabase/auth-js', 'iceberg-js', '@supabase/phoenix'],
+    transpile: ['gsap', 'tailwind-merge', 'clsx', 'lucide-vue', '@supabase/supabase-js', '@supabase/node-fetch', '@supabase/postgrest-js', '@supabase/realtime-js', '@supabase/storage-js', '@supabase/functions-js', '@supabase/gotrue-js', '@supabase/auth-js', 'iceberg-js', '@supabase/phoenix'],
     postcss: {
       postcssOptions: {
         plugins: { tailwindcss: {}, autoprefixer: {} }

@@ -31,7 +31,8 @@
       </section>
 
       <!-- ── Tech Stack ── -->
-      <Block icon="🛠" title="what i work with" description="Technologies I use day to day">
+      <Block title="what i work with" description="Technologies I use day to day">
+        <template #icon><Wrench :size="15" :stroke-width="2" /></template>
         <TechStack />
       </Block>
 
@@ -39,7 +40,8 @@
       <div class="bottom-row">
 
         <!-- Featured Projects -->
-        <Block icon="💼" title="featured work" description="A selection of projects I've built">
+        <Block title="featured work" description="A selection of projects I've built">
+          <template #icon><Briefcase :size="15" :stroke-width="2" /></template>
           <div class="featured-grid">
             <a
               v-for="project in featuredProjects"
@@ -65,7 +67,8 @@
         </Block>
 
         <!-- Get in touch -->
-        <Block icon="✉️" title="get in touch">
+        <Block title="get in touch">
+          <template #icon><Mail :size="15" :stroke-width="2" /></template>
           <div class="contact-block">
             <p class="contact-block__text">
               Have a project in mind, a question, or just want to say hi?
@@ -73,9 +76,7 @@
             </p>
             <a href="mailto:adhiseptiannugroho@gmail.com" class="contact-block__email">
               adhiseptiannugroho@gmail.com
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:inline;vertical-align:middle;margin-left:4px">
-                <path d="M7 17L17 7M17 7H7M17 7V17"/>
-              </svg>
+              <ArrowUpRight :size="14" :stroke-width="2" class="contact-block__email-icon" />
             </a>
             <div class="contact-socials">
               <a href="https://github.com/fvcksptnngrh" target="_blank" rel="noopener" class="contact-social-link">GitHub</a>
@@ -94,10 +95,11 @@
 import FlipWords from '~/components/FlipWords.vue'
 import Block from '~/components/Block.vue'
 import TechStack from '~/components/TechStack.vue'
+import { Wrench, Briefcase, Mail, ArrowUpRight } from 'lucide-vue'
 
 export default {
   name: 'IndexPage',
-  components: { FlipWords, Block, TechStack },
+  components: { FlipWords, Block, TechStack, Wrench, Briefcase, Mail, ArrowUpRight },
   data() {
     return {
       featuredProjects: [
@@ -425,7 +427,9 @@ export default {
   }
 
   &__email {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
     font-family: $font-mono;
     font-size: $fs-small;
     color: $text-primary;
@@ -439,6 +443,10 @@ export default {
       color: $accent-cyan;
       border-color: $accent-cyan;
     }
+  }
+
+  &__email-icon {
+    flex-shrink: 0;
   }
 }
 

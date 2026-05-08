@@ -32,6 +32,8 @@ module.exports = async (req, res) => {
     res.end(JSON.stringify({
       followers: user.followers || 0,
       public_repos: user.public_repos || 0,
+      following: user.following || 0,
+      created_at: user.created_at || null,
       avatar_url: user.avatar_url,
       html_url: user.html_url
     }))

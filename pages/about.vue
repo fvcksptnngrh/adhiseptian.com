@@ -11,7 +11,8 @@
       </div>
 
       <!-- About me -->
-      <Block icon="👋" title="about me">
+      <Block title="about me">
+        <template #icon><Hand :size="15" :stroke-width="2" /></template>
         <div class="about-text">
           <p>
             I'm <strong>Adhi Septian Nugroho</strong>, a frontend developer and Informatics Engineering student
@@ -41,7 +42,8 @@
       </Block>
 
       <!-- Experience -->
-      <Block icon="💼" title="experience" description="My professional and organizational journey">
+      <Block title="experience" description="My professional and organizational journey">
+        <template #icon><Briefcase :size="15" :stroke-width="2" /></template>
         <div class="exp-list">
           <div v-for="exp in experiences" :key="exp.id" class="exp-item">
             <div class="exp-item__header">
@@ -60,7 +62,8 @@
       </Block>
 
       <!-- Education -->
-      <Block icon="🎓" title="education">
+      <Block title="education">
+        <template #icon><GraduationCap :size="15" :stroke-width="2" /></template>
         <div class="edu-list">
           <div v-for="edu in education" :key="edu.id" class="edu-item">
             <div class="edu-item__header">
@@ -75,7 +78,8 @@
       </Block>
 
       <!-- Certifications -->
-      <Block icon="🏅" title="certifications">
+      <Block title="certifications">
+        <template #icon><Award :size="15" :stroke-width="2" /></template>
         <div class="cert-list">
           <a
             v-for="cert in certifications"
@@ -89,9 +93,7 @@
               <p class="cert-item__name">{{ cert.name }}</p>
               <p class="cert-item__issuer">{{ cert.issuer }}</p>
             </div>
-            <svg class="cert-item__icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7 17L17 7M17 7H7M17 7V17"/>
-            </svg>
+            <ArrowUpRight :size="14" :stroke-width="2" class="cert-item__icon" />
           </a>
         </div>
       </Block>
@@ -102,10 +104,11 @@
 
 <script>
 import Block from '~/components/Block.vue'
+import { Hand, Briefcase, GraduationCap, Award, ArrowUpRight } from 'lucide-vue'
 
 export default {
   name: 'AboutPage',
-  components: { Block },
+  components: { Block, Hand, Briefcase, GraduationCap, Award, ArrowUpRight },
   data() {
     return {
       experiences: [

@@ -17,7 +17,8 @@
       <CodingInsights />
 
       <!-- GitHub -->
-      <Block icon="🐙" title="github insights" description="Open source activity">
+      <Block title="github insights" description="Open source activity">
+        <template #icon><Github :size="15" :stroke-width="2" /></template>
         <GitHubStats />
       </Block>
 
@@ -30,10 +31,11 @@ import Block from '~/components/Block.vue'
 import CodingInsights from '~/components/CodingInsights.vue'
 import GitHubStats from '~/components/GitHubStats.vue'
 import EngagementStats from '~/components/EngagementStats.vue'
+import { Github } from 'lucide-vue'
 
 export default {
   name: 'DashboardPage',
-  components: { Block, CodingInsights, GitHubStats, EngagementStats },
+  components: { Block, CodingInsights, GitHubStats, EngagementStats, Github },
   head() {
     return {
       title: 'Dashboard — Adhi Septian Nugroho',

@@ -1,6 +1,8 @@
 <template>
   <div class="overview-card">
-    <span class="overview-card__icon">{{ icon }}</span>
+    <span class="overview-card__icon">
+      <slot name="icon">{{ icon }}</slot>
+    </span>
     <span class="overview-card__value">{{ value || '—' }}</span>
     <span v-if="sub" class="overview-card__sub">{{ sub }}</span>
     <span class="overview-card__label">{{ label }}</span>
@@ -37,6 +39,9 @@ export default {
   &__icon {
     font-size: 18px;
     line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    color: $text-secondary;
   }
 
   &__value {
