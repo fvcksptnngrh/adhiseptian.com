@@ -24,20 +24,22 @@
 
       <!-- Grid -->
       <div class="projects-grid">
-        <a
+        <component
+          :is="project.url ? 'a' : 'article'"
           v-for="(project, index) in filteredProjects"
           :key="project.id"
-          :href="project.url"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="project-card"
+          :href="project.url || null"
+          :target="project.url ? '_blank' : null"
+          :rel="project.url ? 'noopener noreferrer' : null"
+          :class="['project-card', !project.url ? 'project-card--private' : '']"
           data-aos="fade-up"
           :data-aos-delay="(index % 3) * 60"
         >
           <div class="project-card__top">
             <span class="project-card__num">{{ project.number }}</span>
             <svg class="project-card__arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M7 17L17 7M17 7H7M17 7V17"/>
+              <path v-if="project.url" d="M7 17L17 7M17 7H7M17 7V17"/>
+              <path v-else d="M5 12H19"/>
             </svg>
           </div>
           <h3 class="project-card__title">{{ project.title }}</h3>
@@ -45,7 +47,7 @@
           <div class="project-card__tags">
             <span v-for="t in project.tech" :key="t" class="tag">{{ t }}</span>
           </div>
-        </a>
+        </component>
       </div>
 
     </div>
@@ -107,6 +109,13 @@ export default {
           category: 'Frontend',
           tech: ['Vue.js', 'CSS'],
           url: 'https://adhiseptian.me'
+        },
+        {
+          id: 7, number: '07',
+          title: 'PorTU',
+          role: 'Frontend Developer',
+          category: 'Frontend',
+          tech: ['React.js', 'JavaScript', 'Tailwind CSS', 'API Integration', 'Private Client Project']
         },
       ]
     }
@@ -218,9 +227,15 @@ export default {
     border-color: var(--accent-cyan);
     transform: translateY(-2px);
 
-    .project-card__arrow {
-      transform: translate(2px, -2px);
+    &:not(.project-card--private) {
+      .project-card__arrow {
+        transform: translate(2px, -2px);
+      }
     }
+  }
+
+  &--private {
+    cursor: default;
   }
 
   &__top {
