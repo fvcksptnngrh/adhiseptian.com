@@ -8,6 +8,21 @@ dist/
 # Environment
 .env
 .env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+
+# Deployment tooling
+.vercel/
+.wrangler/
+.netlify/
+.output/
+
+# Test output
+coverage/
+
+# Internal planning docs
+docs/superpowers/
 
 # OS
 Thumbs.db

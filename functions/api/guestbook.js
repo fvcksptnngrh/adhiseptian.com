@@ -1,3 +1,5 @@
+const PINNED_COMMENT_ID = '21734c11-54eb-4720-a356-6dd33c3de447'
+
 export async function onRequest(context) {
   const { request } = context
   const { method } = request
@@ -29,13 +31,30 @@ export async function onRequest(context) {
     'Authorization': 'Bearer ' + supabaseKey,
     'Content-Type': 'application/json'
   }
+  const pinnedEndpoint = `${supabaseUrl}/rest/v1/guestbook?select=*&id=eq.${PINNED_COMMENT_ID}&limit=1`
+  const messagesEndpoint = `${supabaseUrl}/rest/v1/guestbook?select=*&id=neq.${PINNED_COMMENT_ID}&order=created_at.desc&limit=50`
 
-  const endpoint = `${supabaseUrl}/rest/v1/guestbook?select=*&order=created_at.desc&limit=50`
-  
   try {
-    const response = await fetch(endpoint, { headers: supabaseHeaders })
-    const data = await response.json()
-    return Response.json(data, { status: response.status, headers })
+    const [pinned, messagesResponse] = await Promise.all([
+      fetch(pinnedEndpoint, { headers: supabaseHeaders })
+        .then(async (response) => {
+          if (!response.ok) return []
+          const data = await response.json()
+          return Array.isArray(data) ? data.slice(0, 1) : []
+        })
+        .catch(() => []),
+      fetch(messagesEndpoint, { headers: supabaseHeaders })
+    ])
+    const messages = await messagesResponse.json()
+
+    if (!messagesResponse.ok) {
+      return Response.json(messages, { status: messagesResponse.status, headers })
+    }
+
+    return Response.json(
+      pinned.concat(Array.isArray(messages) ? messages : []),
+      { status: messagesResponse.status, headers }
+    )
   } catch (err) {
     return Response.json({ error: err.message }, { status: 500, headers })
   }

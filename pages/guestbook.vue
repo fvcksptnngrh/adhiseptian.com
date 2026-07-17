@@ -44,6 +44,7 @@
               <div class="gb-message__body">
                 <div class="gb-message__top">
                   <span class="gb-message__name">{{ msg.name }}</span>
+                  <span v-if="isPinned(msg.id)" class="gb-badge gb-badge--pinned">Pinned</span>
                   <span v-if="isAuthor(msg.user_id)" class="gb-badge">Author</span>
                   <span class="gb-message__date">{{ formatDate(msg.created_at) }}</span>
                 </div>
@@ -120,6 +121,7 @@
 
 <script>
 var AUTHOR_ID = '2227602c-eefd-46d7-b866-45b83511a220'
+var PINNED_COMMENT_ID = '21734c11-54eb-4720-a356-6dd33c3de447'
 
 export default {
   name: 'GuestbookPage',
@@ -296,6 +298,10 @@ export default {
       } finally {
         this.submitting = false
       }
+    },
+
+    isPinned(messageId) {
+      return messageId === PINNED_COMMENT_ID
     },
 
     isAuthor(userId) {
@@ -648,7 +654,7 @@ export default {
   }
 }
 
-// ── Author Badge ──
+// ── Message Badges ──
 .gb-badge {
   display: inline-flex;
   align-items: center;
@@ -661,6 +667,11 @@ export default {
   background: #cabdff 20% transparent;
   flex-shrink: 0;
   line-height: 1.7;
+
+  &--pinned {
+    color: var(--accent-cyan);
+    background: var(--accent-cyan-glow);
+  }
 }
 
 // ── Transitions ──

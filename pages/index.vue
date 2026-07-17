@@ -196,7 +196,7 @@ export default {
 .home-page {
   position: relative;
   padding: 64px 0 0;
-  overflow: visible;
+  overflow-x: hidden;
 }
 
 .content-wrap {
