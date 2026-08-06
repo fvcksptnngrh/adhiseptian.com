@@ -1,35 +1,48 @@
-export async function onRequestGet(context) {
-  const apiKey = context.env.WAKATIME_API_KEY
+function hasAiKeyword(name, keywords) {
+  var normalizedName = name.toLowerCase()
+  for (var i = 0; i < keywords.length; i++) {
+    if (normalizedName.indexOf(keywords[i]) !== -1) return true
+  }
+  return false
+}
 
-  const headers = new Headers({
+export async function onRequest(context) {
+  var apiKey = context.env.WAKATIME_API_KEY
+  var responseHeaders = {
     'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*'
-  })
-
-  if (!apiKey) {
-    return Response.json({ configured: false }, { headers })
   }
 
-  const trimmed = apiKey.trim()
-  // In Cloudflare Workers, btoa is available for base64 encoding
-  const encoded = btoa(trimmed)
-  const wakatimeHeaders = { Authorization: `Basic ${encoded}` }
+  if (!apiKey) {
+    return new Response(JSON.stringify({ configured: false }), {
+      headers: responseHeaders
+    })
+  }
+
+  var trimmed = apiKey.trim()
+  var encoded = btoa(trimmed)
+  var headers = { Authorization: 'Basic ' + encoded }
 
   try {
-    const [stats7dRes, statsTodayRes, allTimeRes] = await Promise.all([
-      fetch('https://wakatime.com/api/v1/users/current/stats/last_7_days', { headers: wakatimeHeaders }),
-      fetch('https://wakatime.com/api/v1/users/current/summaries?range=today', { headers: wakatimeHeaders }),
-      fetch('https://wakatime.com/api/v1/users/current/all_time_since_today', { headers: wakatimeHeaders })
+    var responses = await Promise.all([
+      fetch('https://wakatime.com/api/v1/users/current/stats/last_7_days', { headers: headers }),
+      fetch('https://wakatime.com/api/v1/users/current/summaries?range=today', { headers: headers }),
+      fetch('https://wakatime.com/api/v1/users/current/all_time_since_today', { headers: headers })
     ])
 
-    const stats7d = await stats7dRes.json()
-    const statsToday = await statsTodayRes.json()
-    const allTime = await allTimeRes.json()
+    var data = await Promise.all([
+      responses[0].json(),
+      responses[1].json(),
+      responses[2].json()
+    ])
+    var stats7d = data[0]
+    var statsToday = data[1]
+    var allTime = data[2]
 
     // Use last_7_days if it has data, otherwise build from today's summary
-    let stats = stats7d
+    var stats = stats7d
     if ((!stats7d.data || stats7d.data.total_seconds === 0) && statsToday.data && statsToday.data.length > 0) {
-      const today = statsToday.data[0]
+      var today = statsToday.data[0]
       stats = {
         data: {
           total_seconds: today.grand_total ? today.grand_total.total_seconds : 0,
@@ -40,30 +53,27 @@ export async function onRequestGet(context) {
           categories: today.categories || [],
           projects: today.projects || [],
           operating_systems: today.operating_systems || [],
-          best_day: { date: new Date().toISOString().split('T')[0], text: today.grand_total ? today.grand_total.text : '0 secs' },
+          best_day: {
+            date: new Date().toISOString().split('T')[0],
+            text: today.grand_total ? today.grand_total.text : '0 secs'
+          },
           modified_at: new Date().toISOString()
         }
       }
     }
 
     // Merge AI-related entries into regular coding stats
-    const s = stats.data || {}
+    var s = stats.data || {}
+    var aiKeywords = ['ai', 'copilot', 'cursor', 'codeium', 'tabnine', 'chatgpt', 'claude']
 
     // Clean languages: remove AI-related entries, add their time to the closest real language
     if (s.languages && s.languages.length) {
-      const aiKeywords = ['ai', 'copilot', 'cursor', 'codeium', 'tabnine', 'chatgpt', 'claude']
-      const realLangs = []
-      let aiTotal = 0
+      var realLangs = []
+      var aiTotal = 0
 
-      for (const lang of s.languages) {
-        let isAI = false
-        for (const keyword of aiKeywords) {
-          if (lang.name.toLowerCase().includes(keyword)) {
-            isAI = true
-            break
-          }
-        }
-        if (isAI) {
+      for (var i = 0; i < s.languages.length; i++) {
+        var lang = s.languages[i]
+        if (hasAiKeyword(lang.name, aiKeywords)) {
           aiTotal += lang.total_seconds || 0
         } else {
           realLangs.push(lang)
@@ -75,12 +85,12 @@ export async function onRequestGet(context) {
         realLangs[0].total_seconds = (realLangs[0].total_seconds || 0) + aiTotal
 
         // Recalculate percentages
-        let totalSecs = 0
-        for (const lang of realLangs) {
-          totalSecs += lang.total_seconds || 0
+        var totalSecs = 0
+        for (var k = 0; k < realLangs.length; k++) {
+          totalSecs += realLangs[k].total_seconds || 0
         }
-        for (const lang of realLangs) {
-          lang.percent = totalSecs > 0 ? (lang.total_seconds / totalSecs) * 100 : 0
+        for (var m = 0; m < realLangs.length; m++) {
+          realLangs[m].percent = totalSecs > 0 ? (realLangs[m].total_seconds / totalSecs) * 100 : 0
         }
       }
 
@@ -89,19 +99,12 @@ export async function onRequestGet(context) {
 
     // Clean editors: remove AI-related editor entries
     if (s.editors && s.editors.length) {
-      const aiKeywords = ['ai', 'copilot', 'cursor', 'codeium', 'tabnine', 'chatgpt', 'claude']
-      const cleanEditors = []
-      let editorAiTotal = 0
+      var cleanEditors = []
+      var editorAiTotal = 0
 
-      for (const ed of s.editors) {
-        let edIsAI = false
-        for (const keyword of aiKeywords) {
-          if (ed.name.toLowerCase().includes(keyword)) {
-            edIsAI = true
-            break
-          }
-        }
-        if (edIsAI) {
+      for (var ei = 0; ei < s.editors.length; ei++) {
+        var ed = s.editors[ei]
+        if (hasAiKeyword(ed.name, aiKeywords)) {
           editorAiTotal += ed.total_seconds || 0
         } else {
           cleanEditors.push(ed)
@@ -110,12 +113,12 @@ export async function onRequestGet(context) {
 
       if (editorAiTotal > 0 && cleanEditors.length > 0) {
         cleanEditors[0].total_seconds = (cleanEditors[0].total_seconds || 0) + editorAiTotal
-        let edTotalSecs = 0
-        for (const ed of cleanEditors) {
-          edTotalSecs += ed.total_seconds || 0
+        var edTotalSecs = 0
+        for (var ek = 0; ek < cleanEditors.length; ek++) {
+          edTotalSecs += cleanEditors[ek].total_seconds || 0
         }
-        for (const ed of cleanEditors) {
-          ed.percent = edTotalSecs > 0 ? (ed.total_seconds / edTotalSecs) * 100 : 0
+        for (var em = 0; em < cleanEditors.length; em++) {
+          cleanEditors[em].percent = edTotalSecs > 0 ? (cleanEditors[em].total_seconds / edTotalSecs) * 100 : 0
         }
       }
 
@@ -124,29 +127,20 @@ export async function onRequestGet(context) {
 
     // Clean categories: merge AI-related categories into "Coding"
     if (s.categories && s.categories.length) {
-      const aiKeywords = ['ai', 'copilot', 'cursor', 'codeium', 'tabnine', 'chatgpt', 'claude']
-      let codingCat = null
-      let catAiTotal = 0
-      const cleanCats = []
+      var codingCat = null
+      var catAiTotal = 0
+      var cleanCats = []
 
-      for (const cat of s.categories) {
-        const catName = cat.name.toLowerCase()
+      for (var ci = 0; ci < s.categories.length; ci++) {
+        var cat = s.categories[ci]
+        var catName = cat.name.toLowerCase()
         if (catName === 'coding' || catName === 'code') {
           codingCat = cat
           cleanCats.push(cat)
+        } else if (catName.indexOf('ai') !== -1 || catName.indexOf('copilot') !== -1 || catName.indexOf('cursor') !== -1) {
+          catAiTotal += cat.total_seconds || 0
         } else {
-          let isAI = false
-          for (const keyword of aiKeywords) {
-            if (catName.includes(keyword)) {
-              isAI = true
-              break
-            }
-          }
-          if (isAI) {
-            catAiTotal += cat.total_seconds || 0
-          } else {
-            cleanCats.push(cat)
-          }
+          cleanCats.push(cat)
         }
       }
 
@@ -157,24 +151,29 @@ export async function onRequestGet(context) {
           cleanCats.unshift({ name: 'Coding', total_seconds: catAiTotal, percent: 0 })
           codingCat = cleanCats[0]
         }
-        let catTotalSecs = 0
-        for (const cat of cleanCats) {
-          catTotalSecs += cat.total_seconds || 0
+        var catTotalSecs = 0
+        for (var ck = 0; ck < cleanCats.length; ck++) {
+          catTotalSecs += cleanCats[ck].total_seconds || 0
         }
-        for (const cat of cleanCats) {
-          cat.percent = catTotalSecs > 0 ? (cat.total_seconds / catTotalSecs) * 100 : 0
+        for (var cm = 0; cm < cleanCats.length; cm++) {
+          cleanCats[cm].percent = catTotalSecs > 0 ? (cleanCats[cm].total_seconds / catTotalSecs) * 100 : 0
         }
       }
 
       s.categories = cleanCats
     }
 
-    return Response.json({
+    return new Response(JSON.stringify({
       configured: true,
       stats: s,
       allTime: allTime.data
-    }, { headers })
+    }), {
+      headers: responseHeaders
+    })
   } catch (err) {
-    return Response.json({ configured: true, error: err.message }, { status: 500, headers })
+    return new Response(JSON.stringify({ configured: true, error: err.message }), {
+      status: 500,
+      headers: responseHeaders
+    })
   }
 }

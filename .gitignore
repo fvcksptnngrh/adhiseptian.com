@@ -8,21 +8,8 @@ dist/
 # Environment
 .env
 .env.*
-!.env.example
 .dev.vars
-.dev.vars.*
-
-# Deployment tooling
-.vercel/
-.wrangler/
-.netlify/
-.output/
-
-# Test output
-coverage/
-
-# Internal planning docs
-docs/superpowers/
+!.dev.vars.example
 
 # OS
 Thumbs.db
@@ -41,4 +28,4 @@ Thumbs.db
 clean.js
 fix.js
 prompt_siap.txt
-.unlighthouse
+context.md

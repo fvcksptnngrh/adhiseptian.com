@@ -1,105 +1,174 @@
-export async function onRequest(context) {
-  const { request } = context
-  const { method } = request
-  
-  const headers = new Headers({
-    'Access-Control-Allow-Origin': '*',
-    'Vary': 'Origin',
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type'
-  })
+var ALLOWED_PAGES = {
+  '/': true,
+  '/projects': true,
+  '/dashboard': true,
+  '/guestbook': true,
+  '/about': true
+}
 
-  // Handle OPTIONS
-  if (method === 'OPTIONS') {
-    return new Response(null, { status: 204, headers })
-  }
+var ALLOWED_TYPES = {
+  view: true,
+  reaction: true
+}
 
-  if (method !== 'GET' && method !== 'POST') {
-    return Response.json({ error: 'Method not allowed' }, { status: 405, headers })
-  }
-
-  const supabaseUrl = context.env.SUPABASE_URL
-  const supabaseKey = context.env.SUPABASE_ANON_KEY
-
-  if (!supabaseUrl || !supabaseKey) {
-    if (method === 'POST') {
-      return Response.json({ ok: false, configured: false }, { headers })
+function jsonResponse(data, status, extraHeaders) {
+  var headers = { 'Content-Type': 'application/json' }
+  if (extraHeaders) {
+    var keys = Object.keys(extraHeaders)
+    for (var i = 0; i < keys.length; i++) {
+      headers[keys[i]] = extraHeaders[keys[i]]
     }
-    return Response.json({ views: 0, reactions: 0 }, { headers })
+  }
+  return new Response(JSON.stringify(data), {
+    status: status || 200,
+    headers: headers
+  })
+}
+
+function isAllowedOrigin(request) {
+  var origin = request.headers.get('origin')
+  if (!origin) return true
+
+  try {
+    return new URL(origin).host === new URL(request.url).host
+  } catch (e) {
+    return false
+  }
+}
+
+export async function onRequest(context) {
+  var request = context.request
+  var env = context.env
+  var origin = request.headers.get('origin')
+
+  var corsHeaders = {}
+  if (origin && isAllowedOrigin(request)) {
+    corsHeaders['Access-Control-Allow-Origin'] = origin
+  }
+  corsHeaders['Vary'] = 'Origin'
+  corsHeaders['Access-Control-Allow-Methods'] = 'GET, POST, OPTIONS'
+  corsHeaders['Access-Control-Allow-Headers'] = 'Content-Type'
+
+  if (request.method === 'OPTIONS') {
+    if (!isAllowedOrigin(request)) {
+      return jsonResponse({ error: 'Origin not allowed' }, 403, corsHeaders)
+    }
+    return new Response(null, { status: 204, headers: corsHeaders })
   }
 
-  const baseHeaders = {
+  if (request.method !== 'GET' && request.method !== 'POST') {
+    return jsonResponse({ error: 'Method not allowed' }, 405, corsHeaders)
+  }
+
+  var supabaseUrl = env.SUPABASE_URL
+  var supabaseKey = env.SUPABASE_ANON_KEY
+
+  var baseHeaders = {
     'apikey': supabaseKey,
     'Authorization': 'Bearer ' + supabaseKey,
     'Content-Type': 'application/json'
   }
 
-  if (method === 'POST') {
+  if (request.method === 'POST') {
+    if (!isAllowedOrigin(request)) {
+      return jsonResponse({ error: 'Origin not allowed' }, 403, corsHeaders)
+    }
+
     try {
-      const body = await request.json()
-      const page = (body.page || '').trim()
-      const type = (body.type || 'view').trim()
-
-      const ALLOWED_PAGES = {
-        '/': true,
-        '/projects': true,
-        '/dashboard': true,
-        '/guestbook': true,
-        '/about': true
+      var body = await request.text()
+      if (body.length > 2048) {
+        throw new Error('Request body too large')
       }
 
-      const ALLOWED_TYPES = {
-        view: true,
-        reaction: true
+      var parsed
+      try {
+        parsed = body ? JSON.parse(body) : {}
+      } catch (e) {
+        throw new Error('Invalid JSON')
       }
 
-      if (!ALLOWED_PAGES[page] || !ALLOWED_TYPES[type]) {
-        return Response.json({ error: 'Invalid page or engagement type' }, { status: 400, headers })
+      var page = (parsed.page || '').trim()
+      var type = (parsed.type || 'view').trim()
+
+      if (!ALLOWED_PAGES[page]) {
+        return jsonResponse({ error: 'Invalid page' }, 400, corsHeaders)
       }
 
-      const endpoint = `${supabaseUrl}/rest/v1/page_views`
-      const response = await fetch(endpoint, {
+      if (!ALLOWED_TYPES[type]) {
+        return jsonResponse({ error: 'Invalid engagement type' }, 400, corsHeaders)
+      }
+
+      if (!supabaseUrl || !supabaseKey) {
+        return jsonResponse({ ok: false, configured: false }, 200, corsHeaders)
+      }
+
+      var postHeaders = {
+        'apikey': supabaseKey,
+        'Authorization': 'Bearer ' + supabaseKey,
+        'Content-Type': 'application/json',
+        'Prefer': 'return=minimal'
+      }
+
+      var result = await fetch(supabaseUrl + '/rest/v1/page_views', {
         method: 'POST',
-        headers: { ...baseHeaders, 'Prefer': 'return=minimal' },
-        body: JSON.stringify({ page, type })
+        headers: postHeaders,
+        body: JSON.stringify({ page: page, type: type })
       })
 
-      if (!response.ok) {
-        return Response.json({ error: 'Failed to record engagement' }, { status: response.status, headers })
+      if (result.status >= 400) {
+        return jsonResponse({ error: 'Failed to record engagement' }, result.status, corsHeaders)
       }
 
-      return Response.json({ ok: true }, { headers })
+      return jsonResponse({ ok: true }, 200, corsHeaders)
     } catch (e) {
-      return Response.json({ error: e.message }, { status: 400, headers })
+      return jsonResponse({ error: e.message }, 400, corsHeaders)
     }
   }
 
-  // Handle GET
+  // GET — count views and reactions
+  if (!supabaseUrl || !supabaseKey) {
+    return jsonResponse({ views: 0, reactions: 0 }, 200, corsHeaders)
+  }
+
   try {
-    const countHeaders = {
-      ...baseHeaders,
+    var countHeaders = {
+      'apikey': supabaseKey,
+      'Authorization': 'Bearer ' + supabaseKey,
+      'Content-Type': 'application/json',
       'Prefer': 'count=exact',
       'Range-Unit': 'items',
       'Range': '0-0'
     }
 
-    const [viewsRes, reactionsRes] = await Promise.all([
-      fetch(`${supabaseUrl}/rest/v1/page_views?type=eq.view&select=id`, { headers: countHeaders }),
-      fetch(`${supabaseUrl}/rest/v1/page_views?type=eq.reaction&select=id`, { headers: countHeaders })
-    ])
+    var viewsRes = await fetch(
+      supabaseUrl + '/rest/v1/page_views?type=eq.view&select=id',
+      { headers: countHeaders }
+    )
 
-    const getCount = (res) => {
-      const contentRange = res.headers.get('content-range')
-      const match = contentRange && contentRange.match(/\/(\d+)$/)
-      return match ? Number(match[1]) : 0
+    var reactionsRes = await fetch(
+      supabaseUrl + '/rest/v1/page_views?type=eq.reaction&select=id',
+      { headers: countHeaders }
+    )
+
+    async function countFromResponse(res) {
+      var cr = res.headers.get('content-range')
+      var match = cr && cr.match(/\/(\d+)$/)
+      if (match) return Number(match[1])
+
+      var data = await res.json()
+      return Array.isArray(data) ? data.length : 0
     }
 
-    return Response.json({
-      views: getCount(viewsRes),
-      reactions: getCount(reactionsRes)
-    }, { headers })
+    var counts = await Promise.all([
+      countFromResponse(viewsRes),
+      countFromResponse(reactionsRes)
+    ])
+
+    return jsonResponse({
+      views: counts[0],
+      reactions: counts[1]
+    }, 200, corsHeaders)
   } catch (e) {
-    return Response.json({ views: 0, reactions: 0 }, { headers })
+    return jsonResponse({ views: 0, reactions: 0 }, 200, corsHeaders)
   }
 }
