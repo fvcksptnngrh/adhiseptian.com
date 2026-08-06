@@ -1,0 +1,6 @@
+/brand-logo-*.png
+  Cache-Control: public, max-age=31536000, immutable
+
+/api/*
+  Cache-Control: no-store
+  Access-Control-Allow-Origin: *

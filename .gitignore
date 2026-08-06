@@ -8,6 +8,8 @@ dist/
 # Environment
 .env
 .env.*
+.dev.vars
+!.dev.vars.example
 
 # OS
 Thumbs.db
@@ -25,3 +27,4 @@ Thumbs.db
 clean.js
 fix.js
 prompt_siap.txt
+context.md
