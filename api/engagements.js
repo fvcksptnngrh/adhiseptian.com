@@ -19,6 +19,23 @@ function send(res, status, payload) {
   res.end(JSON.stringify(payload))
 }
 
+function configurationError(res) {
+  return send(res, 503, {
+    error: 'Supabase is not configured for this deployment',
+    code: 'SUPABASE_NOT_CONFIGURED',
+    configured: false
+  })
+}
+
+function upstreamError(res, status) {
+  return send(res, 502, {
+    error: 'Unable to query engagement data from Supabase',
+    code: 'SUPABASE_QUERY_FAILED',
+    configured: true,
+    upstream_status: status || null
+  })
+}
+
 function isAllowedOrigin(req) {
   var origin = req.headers.origin
   if (!origin) return true
@@ -130,7 +147,7 @@ module.exports = async function (req, res) {
       }
 
       if (!supabaseUrl || !supabaseKey) {
-        return send(res, 200, { ok: false, configured: false })
+        return configurationError(res)
       }
 
       var postHeaders = Object.assign({}, baseHeaders, { 'Prefer': 'return=minimal' })
@@ -141,17 +158,17 @@ module.exports = async function (req, res) {
       })
 
       if (result.status >= 400) {
-        return send(res, result.status, { error: 'Failed to record engagement' })
+        return upstreamError(res, result.status)
       }
 
-      return send(res, 200, { ok: true })
+      return send(res, 200, { ok: true, configured: true })
     } catch (e) {
       return send(res, 400, { error: e.message })
     }
   }
 
   if (!supabaseUrl || !supabaseKey) {
-    return send(res, 200, { views: 0, reactions: 0 })
+    return configurationError(res)
   }
 
   try {
@@ -175,11 +192,15 @@ module.exports = async function (req, res) {
       null
     )
 
+    if (allViews.status < 200 || allViews.status >= 300) return upstreamError(res, allViews.status)
+    if (allReactions.status < 200 || allReactions.status >= 300) return upstreamError(res, allReactions.status)
+
     return send(res, 200, {
+      configured: true,
       views: countFromResult(allViews),
       reactions: countFromResult(allReactions)
     })
   } catch (e) {
-    return send(res, 200, { views: 0, reactions: 0 })
+    return upstreamError(res)
   }
 }

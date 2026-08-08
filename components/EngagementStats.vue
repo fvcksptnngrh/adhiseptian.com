@@ -10,7 +10,9 @@
       </div>
     </div>
 
-    <div class="eng-grid">
+    <p v-if="error" class="eng-error" role="alert">{{ error }}</p>
+
+    <div v-else class="eng-grid">
       <div v-for="stat in stats" :key="stat.label" class="eng-stat" ref="statEls">
         <span class="eng-stat__label">{{ stat.label }}</span>
         <span class="eng-stat__value">{{ stat.prefix }}{{ stat.display.toLocaleString() }}{{ stat.suffix }}</span>
@@ -32,7 +34,8 @@ export default {
         { label: 'All-Time Reactions', value: 0, display: 0, prefix: '', suffix: '' },
         { label: 'Endorsements', value: 10, display: 0, prefix: '', suffix: '+' }
       ],
-      hasAnimated: false
+      hasAnimated: false,
+      error: null
     }
   },
   mounted() {
@@ -47,6 +50,9 @@ export default {
       try {
         var res = await fetch('/api/engagements')
         var data = await res.json()
+        if (!res.ok || data.error) {
+          throw new Error(data.error || 'Engagement statistics are unavailable right now.')
+        }
         if (data.views !== undefined) {
           this.stats[0].value = data.views
         }
@@ -58,7 +64,7 @@ export default {
           this.animateCountUp()
         }
       } catch (e) {
-        // Keep defaults
+        this.error = e.message || 'Engagement statistics are unavailable right now.'
       }
     },
     setupObserver() {
@@ -167,6 +173,16 @@ export default {
   @media (max-width: $bp-mobile) {
     grid-template-columns: 1fr;
   }
+}
+
+.eng-error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.08);
+  color: $text-secondary;
+  font-size: $fs-caption;
 }
 
 .eng-stat {

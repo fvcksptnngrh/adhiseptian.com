@@ -25,6 +25,23 @@ function jsonResponse(data, status, extraHeaders) {
   })
 }
 
+function configurationError(corsHeaders) {
+  return jsonResponse({
+    error: 'Supabase is not configured for this deployment',
+    code: 'SUPABASE_NOT_CONFIGURED',
+    configured: false
+  }, 503, corsHeaders)
+}
+
+function upstreamError(corsHeaders, status) {
+  return jsonResponse({
+    error: 'Unable to query engagement data from Supabase',
+    code: 'SUPABASE_QUERY_FAILED',
+    configured: true,
+    upstream_status: status || null
+  }, 502, corsHeaders)
+}
+
 function isAllowedOrigin(request) {
   var origin = request.headers.get('origin')
   if (!origin) return true
@@ -63,12 +80,6 @@ export async function onRequest(context) {
   var supabaseUrl = env.SUPABASE_URL
   var supabaseKey = env.SUPABASE_ANON_KEY
 
-  var baseHeaders = {
-    'apikey': supabaseKey,
-    'Authorization': 'Bearer ' + supabaseKey,
-    'Content-Type': 'application/json'
-  }
-
   if (request.method === 'POST') {
     if (!isAllowedOrigin(request)) {
       return jsonResponse({ error: 'Origin not allowed' }, 403, corsHeaders)
@@ -99,7 +110,7 @@ export async function onRequest(context) {
       }
 
       if (!supabaseUrl || !supabaseKey) {
-        return jsonResponse({ ok: false, configured: false }, 200, corsHeaders)
+        return configurationError(corsHeaders)
       }
 
       var postHeaders = {
@@ -116,18 +127,18 @@ export async function onRequest(context) {
       })
 
       if (result.status >= 400) {
-        return jsonResponse({ error: 'Failed to record engagement' }, result.status, corsHeaders)
+        return upstreamError(corsHeaders, result.status)
       }
 
-      return jsonResponse({ ok: true }, 200, corsHeaders)
+      return jsonResponse({ ok: true, configured: true }, 200, corsHeaders)
     } catch (e) {
-      return jsonResponse({ error: e.message }, 400, corsHeaders)
+      return jsonResponse({ error: e.message, code: 'INVALID_ENGAGEMENT_REQUEST' }, 400, corsHeaders)
     }
   }
 
   // GET — count views and reactions
   if (!supabaseUrl || !supabaseKey) {
-    return jsonResponse({ views: 0, reactions: 0 }, 200, corsHeaders)
+    return configurationError(corsHeaders)
   }
 
   try {
@@ -150,6 +161,9 @@ export async function onRequest(context) {
       { headers: countHeaders }
     )
 
+    if (!viewsRes.ok) return upstreamError(corsHeaders, viewsRes.status)
+    if (!reactionsRes.ok) return upstreamError(corsHeaders, reactionsRes.status)
+
     async function countFromResponse(res) {
       var cr = res.headers.get('content-range')
       var match = cr && cr.match(/\/(\d+)$/)
@@ -165,10 +179,11 @@ export async function onRequest(context) {
     ])
 
     return jsonResponse({
+      configured: true,
       views: counts[0],
       reactions: counts[1]
     }, 200, corsHeaders)
   } catch (e) {
-    return jsonResponse({ views: 0, reactions: 0 }, 200, corsHeaders)
+    return upstreamError(corsHeaders)
   }
 }

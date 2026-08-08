@@ -26,6 +26,8 @@
       <div class="gh-skeleton" v-for="i in 3" :key="'sk'+i"></div>
     </div>
 
+    <p v-else-if="error" class="gh-error" role="alert">{{ error }}</p>
+
     <template v-else>
       <!-- Stat cards -->
       <div class="gh-cards">
@@ -81,7 +83,8 @@ export default {
   data() {
     return {
       loading: true,
-      stats: {}
+      stats: {},
+      error: null
     }
   },
   computed: {
@@ -95,9 +98,13 @@ export default {
   async mounted() {
     try {
       const res = await fetch('/api/github')
-      this.stats = await res.json()
+      const data = await res.json()
+      if (!res.ok || data.error) {
+        throw new Error(data.error || 'GitHub statistics are unavailable right now.')
+      }
+      this.stats = data
     } catch (e) {
-      this.stats = { followers: 0, public_repos: 0, following: 0 }
+      this.error = e.message || 'GitHub statistics are unavailable right now.'
     } finally {
       this.loading = false
     }
@@ -208,6 +215,16 @@ $gh-emerald: #10b981;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
+}
+
+.gh-error {
+  margin: 0;
+  padding: 12px 14px;
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.08);
+  color: $text-secondary;
+  font-size: $fs-caption;
 }
 
 .gh-skeleton {

@@ -11,6 +11,7 @@
       <nuxt-link to="/" class="flex items-center gap-2 group" @click.native="menuOpen = false">
         <img
           :src="logoSrc"
+          :key="logoSrc"
           alt="Adhi Septian logo"
           width="172"
           height="160"
@@ -142,6 +143,8 @@
 import { cn } from '~/lib/utils'
 import ThemeToggle from '~/components/ThemeToggle.vue'
 
+var LOGO_VERSION = '20260808'
+
 export default {
   name: 'Navbar',
   components: { ThemeToggle },
@@ -166,7 +169,8 @@ export default {
   },
   computed: {
     logoSrc() {
-      return this.isDark ? '/brand-logo-white.png' : '/brand-logo-black.png'
+      var filename = this.isDark ? 'brand-logo-white.png' : 'brand-logo-black.png'
+      return '/' + filename + '?v=' + LOGO_VERSION
     }
   },
   mounted() {

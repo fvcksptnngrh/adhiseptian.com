@@ -1,5 +1,7 @@
 const https = require('https')
 
+const USERNAME = 'fvcksptnngrh'
+
 function httpsGet(url, headers) {
   return new Promise((resolve, reject) => {
     const opts = new URL(url)
@@ -7,38 +9,65 @@ function httpsGet(url, headers) {
       let data = ''
       res.on('data', chunk => { data += chunk })
       res.on('end', () => {
-        try { resolve(JSON.parse(data)) }
-        catch (e) { reject(new Error('Failed to parse response')) }
+        let body
+        try { body = JSON.parse(data || '{}') }
+        catch (e) { return reject(new Error('Failed to parse GitHub response')) }
+        resolve({ status: res.statusCode, headers: res.headers || {}, body })
       })
     }).on('error', reject)
   })
 }
 
+function send(res, status, body) {
+  res.statusCode = status
+  res.end(JSON.stringify(body))
+}
+
 module.exports = async (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.setHeader('Access-Control-Allow-Origin', '*')
+  res.setHeader('Cache-Control', 'no-store')
 
-  const username = 'fvcksptnngrh'
+  if (req.method !== 'GET') {
+    return send(res, 405, { error: 'Method not allowed', code: 'METHOD_NOT_ALLOWED' })
+  }
+
   const token = process.env.GITHUB_TOKEN
-
   const headers = {
-    'User-Agent': 'portfolio-app',
-    'Accept': 'application/vnd.github.v3+json',
-    ...(token ? { Authorization: `token ${token}` } : {})
+    'User-Agent': 'adhiseptian-portfolio',
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28',
+    ...(token ? { Authorization: `Bearer ${token}` } : {})
   }
 
   try {
-    const user = await httpsGet(`https://api.github.com/users/${username}`, headers)
-    res.end(JSON.stringify({
-      followers: user.followers || 0,
-      public_repos: user.public_repos || 0,
-      following: user.following || 0,
-      created_at: user.created_at || null,
-      avatar_url: user.avatar_url,
-      html_url: user.html_url
-    }))
+    const result = await httpsGet(`https://api.github.com/users/${USERNAME}`, headers)
+    if (result.status < 200 || result.status >= 300) {
+      if (result.status === 403 && result.headers['x-ratelimit-remaining'] === '0') {
+        const reset = result.headers['x-ratelimit-reset']
+        return send(res, 429, {
+          error: 'GitHub API rate limit exceeded. Configure GITHUB_TOKEN in Cloudflare Pages.',
+          code: 'GITHUB_RATE_LIMITED',
+          reset_at: reset ? new Date(Number(reset) * 1000).toISOString() : null
+        })
+      }
+      return send(res, 502, {
+        error: result.body && result.body.message ? `GitHub API error: ${result.body.message}` : 'GitHub API request failed',
+        code: 'GITHUB_API_ERROR',
+        upstream_status: result.status
+      })
+    }
+
+    return send(res, 200, {
+      followers: result.body.followers,
+      public_repos: result.body.public_repos,
+      following: result.body.following,
+      created_at: result.body.created_at || null,
+      avatar_url: result.body.avatar_url || null,
+      html_url: result.body.html_url || null,
+      authenticated: Boolean(token)
+    })
   } catch (err) {
-    res.statusCode = 500
-    res.end(JSON.stringify({ error: 'Failed to fetch GitHub stats' }))
+    return send(res, 502, { error: 'Unable to reach the GitHub API', code: 'GITHUB_NETWORK_ERROR' })
   }
 }

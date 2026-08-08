@@ -21,6 +21,10 @@
             <div class="gb-skeleton" v-for="i in 4" :key="i"></div>
           </div>
 
+          <div v-else-if="loadError" class="gb-empty gb-error" role="alert">
+            <p>{{ loadError }}</p>
+          </div>
+
           <!-- Empty -->
           <div v-else-if="messages.length === 0" class="gb-empty">
             <p>No messages yet. Be the first to sign the guestbook!</p>
@@ -131,6 +135,7 @@ export default {
       submitting: false,
       success: false,
       error: null,
+      loadError: null,
       user: null,
       supabaseClient: null,
       messages: [],
@@ -238,14 +243,16 @@ export default {
 
     async fetchMessages() {
       this.loading = true
+      this.loadError = null
       try {
         var res = await fetch('/api/guestbook')
         var data = await res.json()
-        if (Array.isArray(data)) {
-          this.messages = data
+        if (!res.ok || !Array.isArray(data)) {
+          throw new Error(data && data.error ? data.error : 'Guestbook messages are unavailable right now.')
         }
+        this.messages = data
       } catch (e) {
-        this.error = 'Failed to load messages'
+        this.loadError = e.message || 'Guestbook messages are unavailable right now.'
       } finally {
         this.loading = false
         this.refreshAnimations()
@@ -413,6 +420,12 @@ export default {
     font-size: $fs-small;
     color: var(--text-muted);
   }
+}
+
+.gb-error {
+  border: 1px solid rgba(248, 113, 113, 0.45);
+  border-radius: 10px;
+  background: rgba(248, 113, 113, 0.08);
 }
 
 .gb-message {
